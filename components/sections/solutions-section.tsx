@@ -38,7 +38,7 @@ export function SolutionsSection() {
         }`}
       >
         <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-          <AnimatedText text="Solutions" variant="spin" />
+          <AnimatedText text="Solutions" variant="wave" shimmer />
         </h2>
         <p className="font-mono text-sm text-foreground/60 md:text-base">
           <AnimatedText text="Tailored implementations" variant="dissolve" />
@@ -66,7 +66,7 @@ export function SolutionsSection() {
               </span>
               <div>
                 <h3 className="mb-1 font-sans text-2xl font-light text-foreground transition-transform duration-300 group-hover:translate-x-2 md:text-3xl lg:text-4xl">
-                  <AnimatedText text={project.title} variant="spin" />
+                  <AnimatedText text={project.title} variant="wave" />
                 </h3>
                 <p className="font-mono text-xs text-foreground/50 md:text-sm">{project.category}</p>
               </div>

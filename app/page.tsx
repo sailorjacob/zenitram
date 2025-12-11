@@ -133,44 +133,18 @@ export default function Home() {
       <nav
         className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-6 py-4 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => scrollToSection(0)}
-            className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
-          >
-            <div className="relative h-28 w-28 md:h-32 md:w-32">
-              <img
-                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
-                alt="Zenitram Logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
-          </button>
-
-          {/* Theme color switcher */}
-          <div className="hidden md:flex items-center gap-2 ml-2">
-            <button
-              onClick={() => setThemeAccent("sand")}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                themeAccent === "sand" 
-                  ? "ring-2 ring-white/50 ring-offset-1 ring-offset-black scale-110" 
-                  : "opacity-70 hover:opacity-100 hover:scale-110"
-              }`}
-              style={{ backgroundColor: "oklch(0.85 0.12 50)" }}
-              title="Sand accent"
-            />
-            <button
-              onClick={() => setThemeAccent("emerald")}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                themeAccent === "emerald" 
-                  ? "ring-2 ring-white/50 ring-offset-1 ring-offset-black scale-110" 
-                  : "opacity-70 hover:opacity-100 hover:scale-110"
-              }`}
-              style={{ backgroundColor: "oklch(0.7 0.18 160)" }}
-              title="Emerald accent"
+        <button
+          onClick={() => scrollToSection(0)}
+          className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
+        >
+          <div className="relative h-20 w-20 md:h-28 md:w-28 lg:h-32 lg:w-32">
+            <img
+              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
+              alt="Zenitram Logo"
+              className="h-full w-full object-contain"
             />
           </div>
-        </div>
+        </button>
 
         <div className="hidden items-center gap-8 md:flex">
           {["Home", "Features", "Solutions", "Technology", "Showcase"].map((item, index) => (
@@ -181,7 +155,7 @@ export default function Home() {
                 currentSection === index ? "text-accent" : "text-foreground/70 hover:text-foreground"
               }`}
             >
-              <AnimatedText text={item} variant="spin" />
+              <AnimatedText text={item} variant="wave" />
               <span
                 className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 ${
                   currentSection === index ? "w-full" : "w-0 group-hover:w-full"
@@ -191,9 +165,41 @@ export default function Home() {
           ))}
         </div>
 
-        <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
-          Start
-        </MagneticButton>
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Theme color switcher */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setThemeAccent("sand")}
+              className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                themeAccent === "sand" 
+                  ? "border-2 border-white/80 bg-transparent" 
+                  : "border border-white/30 hover:border-white/60"
+              }`}
+              style={{ 
+                backgroundColor: themeAccent === "sand" ? "transparent" : "oklch(0.85 0.12 50)",
+                boxShadow: themeAccent === "sand" ? "inset 0 0 0 4px oklch(0.85 0.12 50)" : "none"
+              }}
+              title="Sand accent"
+            />
+            <button
+              onClick={() => setThemeAccent("emerald")}
+              className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                themeAccent === "emerald" 
+                  ? "border-2 border-white/80 bg-transparent" 
+                  : "border border-white/30 hover:border-white/60"
+              }`}
+              style={{ 
+                backgroundColor: themeAccent === "emerald" ? "transparent" : "oklch(0.7 0.18 160)",
+                boxShadow: themeAccent === "emerald" ? "inset 0 0 0 4px oklch(0.7 0.18 160)" : "none"
+              }}
+              title="Emerald accent"
+            />
+          </div>
+
+          <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
+            Start
+          </MagneticButton>
+        </div>
       </nav>
 
       <div
@@ -221,10 +227,10 @@ export default function Home() {
             </p>
             <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center justify-center">
               <MagneticButton size="lg" variant="primary" onClick={() => scrollToSection(1)}>
-                <AnimatedText text="Explore Features" variant="spin" />
+                <AnimatedText text="Explore Features" variant="wave" />
               </MagneticButton>
               <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)}>
-                <AnimatedText text="See Demo" variant="spin" />
+                <AnimatedText text="See Demo" variant="wave" />
               </MagneticButton>
             </div>
           </div>

@@ -16,10 +16,14 @@ export function TechnologySection() {
             }`}
           >
             <h2 className="mb-3 font-sans text-3xl font-light leading-[1.1] tracking-tight text-foreground md:mb-4 md:text-6xl lg:text-7xl">
-              <span className="block">Built on</span>
-              <span className="block">cutting-edge</span>
+              <span className="block">
+                <AnimatedText text="Built on" variant="wave" />
+              </span>
+              <span className="block">
+                <AnimatedText text="cutting-edge" variant="wave" />
+              </span>
               <span className="block text-accent">
-                <AnimatedText text="technology" variant="spin" />
+                <AnimatedText text="technology" variant="wave" shimmer />
               </span>
             </h2>
           </div>
@@ -71,7 +75,7 @@ export function TechnologySection() {
                 </div>
                 <div>
                   <div className="font-sans text-base font-light text-foreground md:text-xl">
-                    <AnimatedText text={stat.label} variant="spin" />
+                    <AnimatedText text={stat.label} variant="wave" />
                   </div>
                   <div className="font-mono text-xs text-foreground/60">{stat.sublabel}</div>
                 </div>

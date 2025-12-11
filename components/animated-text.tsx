@@ -1,18 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 interface AnimatedTextProps {
   text: string
   className?: string
   delay?: number
-  variant?: "spin" | "dissolve" | "cut"
+  variant?: "wave" | "dissolve" | "cut"
   shimmer?: boolean
 }
 
-export function AnimatedText({ text, className = "", delay = 0, variant = "spin", shimmer = false }: AnimatedTextProps) {
+export function AnimatedText({ text, className = "", delay = 0, variant = "wave", shimmer = false }: AnimatedTextProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const [shimmerPosition, setShimmerPosition] = useState(-100)
+  const [shimmerActive, setShimmerActive] = useState(false)
+  const shimmerRef = useRef<HTMLSpanElement>(null)
   const characters = text.split("")
 
   // Auto-shimmer effect that runs periodically
@@ -20,23 +21,8 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
     if (!shimmer) return
     
     const runShimmer = () => {
-      setShimmerPosition(-100)
-      const start = Date.now()
-      const duration = 1500
-      
-      const animate = () => {
-        const elapsed = Date.now() - start
-        const progress = elapsed / duration
-        
-        if (progress < 1) {
-          setShimmerPosition(-100 + (progress * 300))
-          requestAnimationFrame(animate)
-        } else {
-          setShimmerPosition(-100)
-        }
-      }
-      
-      requestAnimationFrame(animate)
+      setShimmerActive(true)
+      setTimeout(() => setShimmerActive(false), 1200)
     }
     
     // Initial shimmer after a delay
@@ -54,9 +40,9 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
   }, [shimmer, delay])
 
   const getVariant = (index: number) => {
-    if (variant === "spin") {
+    if (variant === "wave") {
       return {
-        animation: isHovered ? `spinCharacter 0.6s ease-out ${index * 30}ms` : "none",
+        animation: isHovered ? `waveCharacter 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 40}ms` : "none",
       }
     } else if (variant === "dissolve") {
       return {
@@ -71,9 +57,10 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
 
   return (
     <span
-      className={className}
+      className={`${className} ${shimmer && shimmerActive ? "shimmer-text" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      ref={shimmerRef}
       style={{
         display: "inline-block",
         position: "relative",
@@ -84,51 +71,34 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
           key={index}
           style={{
             display: "inline-block",
-            transformOrigin: "center",
+            transformOrigin: "center bottom",
             ...getVariant(index),
           }}
         >
           {char === " " ? "\u00A0" : char}
         </span>
       ))}
-      
-      {/* Metallic shimmer overlay */}
-      {shimmer && (
-        <span
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-            background: `linear-gradient(
-              120deg,
-              transparent ${shimmerPosition}%,
-              rgba(255, 255, 255, 0.1) ${shimmerPosition + 10}%,
-              rgba(255, 255, 255, 0.4) ${shimmerPosition + 20}%,
-              rgba(255, 255, 255, 0.1) ${shimmerPosition + 30}%,
-              transparent ${shimmerPosition + 40}%
-            )`,
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            mixBlendMode: "overlay",
-          }}
-        />
-      )}
 
       <style jsx global>{`
-        @keyframes spinCharacter {
+        @keyframes waveCharacter {
           0% {
-            transform: rotateY(0deg) rotateZ(0deg);
+            transform: translateY(0) rotate(0deg);
             opacity: 1;
           }
+          25% {
+            transform: translateY(-8px) rotate(-2deg);
+            opacity: 0.9;
+          }
           50% {
-            transform: rotateY(180deg) rotateZ(180deg);
-            opacity: 0.5;
+            transform: translateY(-4px) rotate(0deg);
+            opacity: 1;
+          }
+          75% {
+            transform: translateY(-2px) rotate(1deg);
+            opacity: 0.95;
           }
           100% {
-            transform: rotateY(360deg) rotateZ(0deg);
+            transform: translateY(0) rotate(0deg);
             opacity: 1;
           }
         }
@@ -139,8 +109,8 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
             transform: scale(1);
           }
           50% {
-            opacity: 0;
-            transform: scale(0.5);
+            opacity: 0.3;
+            transform: scale(0.95);
           }
           100% {
             opacity: 1;
@@ -154,13 +124,38 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
             opacity: 1;
           }
           50% {
-            transform: translateY(-20px);
-            opacity: 0;
+            transform: translateY(-12px);
+            opacity: 0.4;
           }
           100% {
             transform: translateY(0px);
             opacity: 1;
           }
+        }
+        
+        @keyframes shimmerSweep {
+          0% {
+            background-position: -200% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
+        }
+        
+        .shimmer-text {
+          background: linear-gradient(
+            120deg,
+            currentColor 0%,
+            currentColor 40%,
+            rgba(255, 255, 255, 0.9) 50%,
+            currentColor 60%,
+            currentColor 100%
+          );
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: shimmerSweep 1.2s ease-in-out;
         }
       `}</style>
     </span>

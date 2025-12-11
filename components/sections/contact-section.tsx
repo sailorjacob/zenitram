@@ -78,7 +78,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
                 <span className="font-mono text-xs text-foreground/60">Phone</span>
               </div>
               <p className="text-base text-foreground md:text-2xl">
-                <AnimatedText text="+1 (829) 576-0844" variant="spin" />
+                <AnimatedText text="+1 (829) 576-0844" variant="wave" />
               </p>
             </div>
 
@@ -111,7 +111,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
               style={{ transitionDelay: "200ms" }}
             >
               <label className="mb-1 block font-mono text-xs text-foreground/60 md:mb-2">
-                <AnimatedText text="Name" variant="spin" />
+                <AnimatedText text="Name" variant="wave" />
               </label>
               <input
                 type="text"
@@ -130,7 +130,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
               style={{ transitionDelay: "350ms" }}
             >
               <label className="mb-1 block font-mono text-xs text-foreground/60 md:mb-2">
-                <AnimatedText text="Email" variant="spin" />
+                <AnimatedText text="Email" variant="wave" />
               </label>
               <input
                 type="email"
@@ -149,7 +149,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
               style={{ transitionDelay: "500ms" }}
             >
               <label className="mb-1 block font-mono text-xs text-foreground/60 md:mb-2">
-                <AnimatedText text="Message" variant="spin" />
+                <AnimatedText text="Message" variant="wave" />
               </label>
               <textarea
                 rows={3}

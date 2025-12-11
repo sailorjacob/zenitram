@@ -14,7 +14,7 @@ export function ShowcaseSection() {
         }`}
       >
         <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-          <AnimatedText text="Live Demo" variant="spin" />
+          <AnimatedText text="Live Demo" variant="wave" shimmer />
         </h2>
         <p className="font-mono text-sm text-foreground/60 md:text-base">
           <AnimatedText text="Interactive showcase" variant="dissolve" />
@@ -47,7 +47,7 @@ export function ShowcaseSection() {
           >
             <div className="rounded-lg border border-accent/20 p-6 transition-all duration-300 group-hover:border-accent/40 group-hover:bg-accent/5">
               <h3 className="mb-2 font-sans text-lg font-light text-foreground">
-                <AnimatedText text={room.title} variant="spin" />
+                <AnimatedText text={room.title} variant="wave" />
               </h3>
               <p className="text-sm text-foreground/70">
                 <AnimatedText text={room.status} variant="dissolve" />
