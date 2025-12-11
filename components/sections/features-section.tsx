@@ -42,11 +42,11 @@ export function FeaturesSection() {
   return (
     <div ref={ref} className="mx-auto w-full max-w-6xl">
       <div
-        className={`mb-16 transition-all duration-700 ${
+        className={`mb-8 sm:mb-12 md:mb-16 transition-all duration-700 ${
           isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
         }`}
       >
-        <h2 className="mb-3 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl text-center">
+        <h2 className="mb-2 sm:mb-3 font-sans text-3xl sm:text-4xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl text-center">
           <span className="block">
             <AnimatedText text="Smart Features" variant="wave" shimmer shimmerSpeed="fast" />
           </span>
@@ -56,7 +56,7 @@ export function FeaturesSection() {
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-3 md:gap-10 lg:gap-12">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-3 md:gap-10 lg:gap-12">
         {features.map((feature, i) => (
           <div
             key={i}
@@ -70,12 +70,12 @@ export function FeaturesSection() {
             <div className="mb-4 flex items-start gap-3">
               <div className="mt-2 h-2 w-2 rounded-full bg-accent flex-shrink-0" />
             </div>
-            <h3 className="mb-3 font-sans text-xl font-light text-foreground md:text-2xl">
+            <h3 className="mb-2 sm:mb-3 font-sans text-lg sm:text-xl font-light text-foreground md:text-2xl">
               <span className="block">
                 <AnimatedText text={feature.title} variant="cut" />
               </span>
             </h3>
-            <p className="text-sm leading-relaxed text-foreground/70 md:text-base">
+            <p className="text-xs sm:text-sm leading-relaxed text-foreground/70 md:text-base">
               <AnimatedText text={feature.description} variant="dissolve" />
             </p>
           </div>

@@ -8,14 +8,14 @@ export function TechnologySection() {
 
   return (
     <div ref={ref} className="mx-auto w-full max-w-7xl">
-      <div className="grid gap-8 md:grid-cols-2 md:gap-16 lg:gap-24">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-2 md:gap-16 lg:gap-24">
         <div>
           <div
-            className={`mb-6 transition-all duration-700 md:mb-12 ${
+            className={`mb-4 sm:mb-6 transition-all duration-700 md:mb-12 ${
               isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
             }`}
           >
-            <h2 className="mb-3 font-sans text-3xl font-light leading-[1.1] tracking-tight text-foreground md:mb-4 md:text-6xl lg:text-7xl">
+            <h2 className="mb-2 sm:mb-3 font-sans text-2xl sm:text-3xl font-light leading-[1.1] tracking-tight text-foreground md:mb-4 md:text-6xl lg:text-7xl">
               <span className="block">
                 <AnimatedText text="Built on" variant="wave" />
               </span>
@@ -29,12 +29,12 @@ export function TechnologySection() {
           </div>
 
           <div
-            className={`space-y-3 transition-all duration-700 md:space-y-4 ${
+            className={`space-y-2 sm:space-y-3 transition-all duration-700 md:space-y-4 ${
               isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
             style={{ transitionDelay: "200ms" }}
           >
-            <p className="max-w-md text-sm leading-relaxed text-foreground/80 md:text-lg">
+            <p className="max-w-md text-xs sm:text-sm leading-relaxed text-foreground/80 md:text-lg">
               <AnimatedText
                 text="We design and install premium smart home systems that seamlessly integrate lighting, climate, security, and entertainment into one intuitive experience."
                 variant="dissolve"
@@ -49,7 +49,7 @@ export function TechnologySection() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center space-y-6 md:space-y-12">
+        <div className="flex flex-col justify-center space-y-4 sm:space-y-6 md:space-y-12">
           {[
             { value: "500+", label: "Rooms", sublabel: "Spaces transformed", direction: "right" },
             { value: "100+", label: "Brands", sublabel: "Device compatibility", direction: "left" },
@@ -65,19 +65,19 @@ export function TechnologySection() {
             return (
               <div
                 key={i}
-                className={`flex items-baseline gap-4 border-l border-accent/30 pl-4 transition-all duration-700 md:gap-8 md:pl-8 ${getRevealClass()}`}
+                className={`flex items-baseline gap-2 sm:gap-4 border-l border-accent/30 pl-3 sm:pl-4 transition-all duration-700 md:gap-8 md:pl-8 ${getRevealClass()}`}
                 style={{
                   transitionDelay: `${300 + i * 150}ms`,
                 }}
               >
-                <div className="text-3xl font-light text-accent md:text-6xl lg:text-7xl">
+                <div className="text-2xl sm:text-3xl font-light text-accent md:text-6xl lg:text-7xl">
                   <AnimatedText text={stat.value} variant="cut" />
                 </div>
                 <div>
-                  <div className="font-sans text-base font-light text-foreground md:text-xl">
+                  <div className="font-sans text-sm sm:text-base font-light text-foreground md:text-xl">
                     <AnimatedText text={stat.label} variant="wave" />
                   </div>
-                  <div className="font-mono text-xs text-foreground/60">{stat.sublabel}</div>
+                  <div className="font-mono text-[10px] sm:text-xs text-foreground/60">{stat.sublabel}</div>
                 </div>
               </div>
             )

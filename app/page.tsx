@@ -131,7 +131,7 @@ export default function Home() {
       </div>
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-6 py-4 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
         <button
           onClick={() => scrollToSection(0)}
@@ -211,57 +211,57 @@ export default function Home() {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {/* Hero Section */}
-        <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-6 py-24 md:px-12">
+        <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
           <div className="max-w-4xl relative z-10 w-full">
-            <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
+            <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">
-                <AnimatedText text="Intelligent Living" variant="spin" shimmer />
+                <AnimatedText text="Intelligent Living" variant="wave" shimmer shimmerSpeed="normal" />
               </span>
               <span className="block">
-                <AnimatedText text="for Modern Homes" variant="cut" shimmer />
+                <AnimatedText text="for Modern Homes" variant="wave" shimmer shimmerSpeed="slow" />
               </span>
             </h1>
-            <p className="mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl">
+            <p className="mb-6 sm:mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-sm sm:text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl px-2">
               Transform your space with seamless automation. Control lighting, climate, security, and entertainment from
               anywhere. Designed for elegance, built for intelligence.
             </p>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center justify-center">
-              <MagneticButton size="lg" variant="primary" onClick={() => scrollToSection(1)}>
+            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 sm:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center justify-center px-4">
+              <MagneticButton size="lg" variant="primary" onClick={() => scrollToSection(1)} className="w-full sm:w-auto">
                 <AnimatedText text="Explore Features" variant="wave" />
               </MagneticButton>
-              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)}>
+              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)} className="w-full sm:w-auto">
                 <AnimatedText text="See Demo" variant="wave" />
               </MagneticButton>
             </div>
           </div>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500 z-20">
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500 z-20">
             <p className="font-mono text-xs text-foreground/40">© 2026 Zenitram</p>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-6 md:px-12 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
           <FeaturesSection />
         </section>
 
         {/* Solutions Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-6 md:px-12 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
           <SolutionsSection />
         </section>
 
         {/* Technology Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-6 md:px-12 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
           <TechnologySection />
         </section>
 
         {/* Showcase Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-6 md:px-12 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
           <ShowcaseSection />
         </section>
 
         {/* Contact Section */}
-        <section className="relative flex h-screen w-screen shrink-0 items-center px-4 md:px-12 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 items-center px-4 pt-24 md:px-12 md:pt-0 lg:px-16">
           <ContactSection scrollToSection={scrollToSection} />
         </section>
       </div>

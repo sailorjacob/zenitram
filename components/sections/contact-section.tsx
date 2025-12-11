@@ -32,14 +32,14 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <div className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:gap-16 lg:gap-24">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-[1.2fr_1fr] md:gap-16 lg:gap-24">
         <div ref={ref} className="flex flex-col justify-center">
           <div
-            className={`mb-6 transition-all duration-700 md:mb-12 ${
+            className={`mb-4 sm:mb-6 transition-all duration-700 md:mb-12 ${
               isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
             }`}
           >
-            <h2 className="mb-2 font-sans text-4xl font-light leading-[1.05] tracking-tight text-foreground md:mb-3 md:text-7xl lg:text-8xl">
+            <h2 className="mb-2 font-sans text-2xl sm:text-3xl font-light leading-[1.05] tracking-tight text-foreground md:mb-3 md:text-7xl lg:text-8xl">
               <span className="block">
                 <AnimatedText text="Start your" variant="wave" shimmer shimmerSpeed="normal" />
               </span>
@@ -52,7 +52,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
             </p>
           </div>
 
-          <div className="space-y-4 md:space-y-8">
+          <div className="space-y-3 sm:space-y-4 md:space-y-8">
             <a
               href="mailto:info@zenitram.io"
               className={`group block transition-all duration-700 ${
@@ -64,7 +64,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
                 <Mail className="h-3 w-3 text-accent" />
                 <span className="font-mono text-xs text-foreground/60">Email</span>
               </div>
-              <p className="text-base text-foreground transition-colors group-hover:text-accent md:text-2xl">
+              <p className="text-sm sm:text-base text-foreground transition-colors group-hover:text-accent md:text-2xl">
                 <AnimatedText text="info@zenitram.io" variant="cut" />
               </p>
             </a>
@@ -79,7 +79,7 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
                 <Phone className="h-3 w-3 text-accent" />
                 <span className="font-mono text-xs text-foreground/60">Phone</span>
               </div>
-              <p className="text-base text-foreground md:text-2xl">
+              <p className="text-sm sm:text-base text-foreground md:text-2xl">
                 <AnimatedText text="+1 (829) 576-0844" variant="wave" />
               </p>
             </div>
@@ -94,10 +94,10 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
                 <MapPin className="h-3 w-3 text-accent" />
                 <span className="font-mono text-xs text-foreground/60">Locations</span>
               </div>
-              <p className="text-base text-foreground md:text-2xl">
+              <p className="text-sm sm:text-base text-foreground md:text-2xl">
                 <AnimatedText text="Miami, Florida, USA" variant="dissolve" />
               </p>
-              <p className="text-base text-foreground/80 md:text-xl mt-1">
+              <p className="text-xs sm:text-sm text-foreground/80 md:text-xl mt-1">
                 <AnimatedText text="Santo Domingo, Dominican Republic" variant="dissolve" />
               </p>
             </div>
