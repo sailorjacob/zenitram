@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 
 interface AnimatedTextProps {
   text: string
@@ -13,7 +13,6 @@ interface AnimatedTextProps {
 export function AnimatedText({ text, className = "", delay = 0, variant = "wave", shimmer = false }: AnimatedTextProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [shimmerActive, setShimmerActive] = useState(false)
-  const shimmerRef = useRef<HTMLSpanElement>(null)
   const characters = text.split("")
 
   // Auto-shimmer effect that runs periodically
@@ -22,16 +21,16 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
     
     const runShimmer = () => {
       setShimmerActive(true)
-      setTimeout(() => setShimmerActive(false), 1200)
+      setTimeout(() => setShimmerActive(false), 1500)
     }
     
     // Initial shimmer after a delay
-    const initialTimeout = setTimeout(runShimmer, 1000 + delay)
+    const initialTimeout = setTimeout(runShimmer, 1500 + delay)
     
-    // Repeat shimmer every 4-6 seconds randomly
+    // Repeat shimmer every 5-7 seconds randomly
     const interval = setInterval(() => {
       runShimmer()
-    }, 4000 + Math.random() * 2000)
+    }, 5000 + Math.random() * 2000)
     
     return () => {
       clearTimeout(initialTimeout)
@@ -57,10 +56,9 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
 
   return (
     <span
-      className={`${className} ${shimmer && shimmerActive ? "shimmer-text" : ""}`}
+      className={className}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      ref={shimmerRef}
       style={{
         display: "inline-block",
         position: "relative",
@@ -78,6 +76,23 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
           {char === " " ? "\u00A0" : char}
         </span>
       ))}
+      
+      {/* Shimmer glare overlay */}
+      {shimmer && (
+        <span
+          className={shimmerActive ? "shimmer-glare-active" : "shimmer-glare"}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: "-100%",
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+            background: "linear-gradient(120deg, transparent 0%, transparent 30%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 55%, transparent 70%, transparent 100%)",
+            transform: "skewX(-20deg)",
+          }}
+        />
+      )}
 
       <style jsx global>{`
         @keyframes waveCharacter {
@@ -133,29 +148,29 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
           }
         }
         
-        @keyframes shimmerSweep {
+        @keyframes glareSwipe {
           0% {
-            background-position: -200% center;
+            left: -100%;
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
           }
           100% {
-            background-position: 200% center;
+            left: 200%;
+            opacity: 0;
           }
         }
         
-        .shimmer-text {
-          background: linear-gradient(
-            120deg,
-            currentColor 0%,
-            currentColor 40%,
-            rgba(255, 255, 255, 0.9) 50%,
-            currentColor 60%,
-            currentColor 100%
-          );
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: shimmerSweep 1.2s ease-in-out;
+        .shimmer-glare {
+          opacity: 0;
+        }
+        
+        .shimmer-glare-active {
+          animation: glareSwipe 1.5s ease-in-out forwards;
         }
       `}</style>
     </span>

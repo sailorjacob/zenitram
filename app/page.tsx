@@ -16,7 +16,7 @@ export default function Home() {
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("silver")
+  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("blue")
 
   useEffect(() => {
     setIsLoaded(true)

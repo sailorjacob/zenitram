@@ -163,7 +163,7 @@ export function DreamVideoBackground({ scrollProgress, currentSection }: DreamVi
       <div 
         className="absolute inset-0 bg-black/40 transition-opacity duration-500"
         style={{
-          opacity: currentSection === 0 ? 0.45 : 0.5,
+          opacity: currentSection === 0 ? 0.55 : 0.45,
         }}
       />
 
