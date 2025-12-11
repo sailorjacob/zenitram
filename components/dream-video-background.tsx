@@ -161,9 +161,9 @@ export function DreamVideoBackground({ scrollProgress, currentSection }: DreamVi
 
       {/* Dark overlay to control overall intensity */}
       <div 
-        className="absolute inset-0 bg-black/50 transition-opacity duration-500"
+        className="absolute inset-0 bg-black/40 transition-opacity duration-500"
         style={{
-          opacity: currentSection === 0 ? 0.7 : 0.55,
+          opacity: currentSection === 0 ? 0.45 : 0.5,
         }}
       />
 

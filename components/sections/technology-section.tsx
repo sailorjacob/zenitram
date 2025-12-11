@@ -36,13 +36,13 @@ export function TechnologySection() {
           >
             <p className="max-w-md text-sm leading-relaxed text-foreground/80 md:text-lg">
               <AnimatedText
-                text="We leverage the latest IoT standards and machine learning algorithms to create systems that are both powerful and intuitive."
+                text="We design and install premium smart home systems that seamlessly integrate lighting, climate, security, and entertainment into one intuitive experience."
                 variant="dissolve"
               />
             </p>
             <p className="max-w-md text-sm leading-relaxed text-foreground/80 md:text-lg">
               <AnimatedText
-                text="Every integration is designed with security and sustainability at the core."
+                text="Every installation is customized to your lifestyle, with ongoing support to ensure everything works perfectly."
                 variant="dissolve"
               />
             </p>
@@ -51,9 +51,9 @@ export function TechnologySection() {
 
         <div className="flex flex-col justify-center space-y-6 md:space-y-12">
           {[
-            { value: "99.9%", label: "Uptime", sublabel: "System reliability", direction: "right" },
-            { value: "50ms", label: "Response", sublabel: "Average latency", direction: "left" },
-            { value: "256-bit", label: "Encryption", sublabel: "Military grade", direction: "right" },
+            { value: "500+", label: "Rooms", sublabel: "Spaces transformed", direction: "right" },
+            { value: "100+", label: "Brands", sublabel: "Device compatibility", direction: "left" },
+            { value: "99%", label: "Satisfaction", sublabel: "Client happiness", direction: "right" },
           ].map((stat, i) => {
             const getRevealClass = () => {
               if (!isVisible) {

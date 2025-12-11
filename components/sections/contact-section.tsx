@@ -40,9 +40,11 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
             }`}
           >
             <h2 className="mb-2 font-sans text-4xl font-light leading-[1.05] tracking-tight text-foreground md:mb-3 md:text-7xl lg:text-8xl">
-              <span className="block">Start your</span>
+              <span className="block">
+                <AnimatedText text="Start your" variant="wave" shimmer />
+              </span>
               <span className="block text-accent">
-                <AnimatedText text="automation" variant="spin" />
+                <AnimatedText text="automation" variant="wave" shimmer />
               </span>
             </h2>
             <p className="font-mono text-xs text-foreground/60 md:text-base">
@@ -93,10 +95,10 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
                 <span className="font-mono text-xs text-foreground/60">Locations</span>
               </div>
               <p className="text-base text-foreground md:text-2xl">
-                <AnimatedText text="Santo Domingo, Dominican Republic" variant="dissolve" />
+                <AnimatedText text="Miami, Florida, USA" variant="dissolve" />
               </p>
               <p className="text-base text-foreground/80 md:text-xl mt-1">
-                <AnimatedText text="Miami, Florida, USA" variant="dissolve" />
+                <AnimatedText text="Santo Domingo, Dominican Republic" variant="dissolve" />
               </p>
             </div>
           </div>
