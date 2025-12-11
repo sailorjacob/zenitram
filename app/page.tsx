@@ -6,16 +6,26 @@ import { ShowcaseSection } from "@/components/sections/showcase-section"
 import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
 import { AnimatedText } from "@/components/animated-text"
-import { FloatingElements } from "@/components/floating-elements"
-import { useRef, useEffect, useState } from "react"
+import { DreamVideoBackground } from "@/components/dream-video-background"
+import { useRef, useEffect, useState, useCallback } from "react"
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
     setIsLoaded(true)
+  }, [])
+
+  // Track scroll progress for dream video background
+  const updateScrollProgress = useCallback(() => {
+    if (!scrollContainerRef.current) return
+    const container = scrollContainerRef.current
+    const maxScroll = container.scrollWidth - container.clientWidth
+    const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0
+    setScrollProgress(progress)
   }, [])
 
   const scrollToSection = (index: number) => {
@@ -48,29 +58,49 @@ export default function Home() {
         if (newSection !== currentSection) {
           setCurrentSection(newSection)
         }
+        
+        updateScrollProgress()
+      }
+    }
+
+    const handleScroll = () => {
+      updateScrollProgress()
+      
+      if (!scrollContainerRef.current) return
+      const sectionWidth = scrollContainerRef.current.offsetWidth
+      const scrollLeft = scrollContainerRef.current.scrollLeft
+      const newSection = Math.round(scrollLeft / sectionWidth)
+      
+      if (newSection !== currentSection) {
+        setCurrentSection(newSection)
       }
     }
 
     const container = scrollContainerRef.current
     if (container) {
       container.addEventListener("wheel", handleWheel, { passive: false })
+      container.addEventListener("scroll", handleScroll, { passive: true })
     }
 
     return () => {
       if (container) {
         container.removeEventListener("wheel", handleWheel)
+        container.removeEventListener("scroll", handleScroll)
       }
     }
-  }, [currentSection])
+  }, [currentSection, updateScrollProgress])
 
   return (
     <main className="relative h-screen w-full overflow-hidden bg-black">
-      <div className="fixed inset-0 -z-10 bg-black">
+      {/* Dream video background with circular portal effect */}
+      <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
+      
+      <div className="fixed inset-0 z-[1] pointer-events-none">
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(135deg, rgb(2, 2, 5) 0%, rgb(10, 15, 35) 25%, rgb(8, 12, 28) 50%, rgb(15, 25, 50) 75%, rgb(5, 10, 25) 100%)",
+              "linear-gradient(135deg, rgba(2, 2, 5, 0.7) 0%, rgba(10, 15, 35, 0.6) 25%, rgba(8, 12, 28, 0.5) 50%, rgba(15, 25, 50, 0.6) 75%, rgba(5, 10, 25, 0.7) 100%)",
           }}
         />
         {/* Subtle cream grid overlay */}
@@ -86,9 +116,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating elements - particles, crosshairs, guide lines */}
-      <FloatingElements />
-
       <nav
         className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-6 py-4 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
@@ -96,11 +123,11 @@ export default function Home() {
           onClick={() => scrollToSection(0)}
           className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
         >
-          <div className="relative h-20 w-20 md:h-28 md:w-28 lg:h-36 lg:w-36">
+          <div className="relative h-20 w-20">
             <img
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
               alt="Zenitram Logo"
-              className="h-full w-full object-contain drop-shadow-[0_0_15px_rgba(200,180,150,0.3)]"
+              className="h-full w-full object-contain"
             />
           </div>
         </button>

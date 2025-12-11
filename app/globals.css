@@ -144,134 +144,44 @@
   }
 }
 
-/* Floating elements animations */
-@keyframes float-drift {
+/* Dream video background animations */
+@keyframes dream-pulse {
   0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-    opacity: var(--opacity, 0.3);
-  }
-  25% {
-    transform: translate(10px, -20px) rotate(90deg);
-    opacity: calc(var(--opacity, 0.3) * 1.2);
-  }
-  50% {
-    transform: translate(-5px, -40px) rotate(180deg);
-    opacity: var(--opacity, 0.3);
-  }
-  75% {
-    transform: translate(-15px, -20px) rotate(270deg);
-    opacity: calc(var(--opacity, 0.3) * 0.8);
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.3;
-    filter: blur(0px);
+    opacity: 0.4;
+    transform: scale(1);
   }
   50% {
     opacity: 0.6;
-    filter: blur(1px);
+    transform: scale(1.02);
   }
 }
 
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes scan-horizontal {
-  0% {
-    transform: translateY(-100vh);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-}
-
-@keyframes scan-vertical {
-  0% {
-    transform: translateX(-100vw);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100vw);
-    opacity: 0;
-  }
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: -100;
-  }
-}
-
-@keyframes blob {
+@keyframes portal-breathe {
   0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(20px, -30px) scale(1.1);
+    filter: blur(0px);
   }
   50% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  75% {
-    transform: translate(30px, 10px) scale(1.05);
+    filter: blur(2px);
   }
 }
 
-.animate-float-drift {
-  animation: float-drift 20s ease-in-out infinite;
+@keyframes soft-glow {
+  0%, 100% {
+    box-shadow: 0 0 60px 30px rgba(200, 180, 150, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 80px 40px rgba(200, 180, 150, 0.08);
+  }
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+.animate-dream-pulse {
+  animation: dream-pulse 8s ease-in-out infinite;
 }
 
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+.animate-portal-breathe {
+  animation: portal-breathe 6s ease-in-out infinite;
 }
 
-.animate-scan-horizontal {
-  animation: scan-horizontal 12s ease-in-out infinite;
-}
-
-.animate-scan-vertical {
-  animation: scan-vertical 15s ease-in-out infinite;
-  animation-delay: 3s;
-}
-
-.animate-dash {
-  animation: dash 20s linear infinite;
-}
-
-.animate-blob {
-  animation: blob 25s ease-in-out infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
+.animate-soft-glow {
+  animation: soft-glow 5s ease-in-out infinite;
 }
