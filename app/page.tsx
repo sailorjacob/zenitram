@@ -100,7 +100,7 @@ export default function Home() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(2, 2, 5, 0.7) 0%, rgba(10, 15, 35, 0.6) 25%, rgba(8, 12, 28, 0.5) 50%, rgba(15, 25, 50, 0.6) 75%, rgba(5, 10, 25, 0.7) 100%)",
+              "linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(5, 5, 8, 0.7) 25%, rgba(3, 3, 6, 0.65) 50%, rgba(8, 8, 12, 0.7) 75%, rgba(0, 0, 0, 0.75) 100%)",
           }}
         />
         {/* Subtle cream grid overlay */}
@@ -123,7 +123,7 @@ export default function Home() {
           onClick={() => scrollToSection(0)}
           className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
         >
-          <div className="relative h-20 w-20">
+          <div className="relative h-28 w-28 md:h-32 md:w-32">
             <img
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
               alt="Zenitram Logo"
@@ -152,7 +152,7 @@ export default function Home() {
         </div>
 
         <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
-          Get In Touch
+          Start
         </MagneticButton>
       </nav>
 
@@ -190,12 +190,7 @@ export default function Home() {
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500 z-20">
-            <div className="flex items-center gap-2">
-              <p className="font-mono text-xs text-foreground/60">Scroll to explore</p>
-              <div className="flex h-6 w-12 items-center justify-center rounded-full border border-accent/20 bg-accent/10 backdrop-blur-md">
-                <div className="h-2 w-2 animate-pulse rounded-full bg-accent/80" />
-              </div>
-            </div>
+            <p className="font-mono text-xs text-foreground/40">© 2026 Zenitram</p>
           </div>
         </section>
 
