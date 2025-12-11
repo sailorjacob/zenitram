@@ -9,7 +9,14 @@ import { AnimatedText } from "@/components/animated-text"
 import { DreamVideoBackground } from "@/components/dream-video-background"
 import { useRef, useEffect, useState, useCallback } from "react"
 
-type ThemeAccent = "sand" | "emerald" | "sapphire"
+type ThemeAccent = "sand" | "silver" | "sapphire" | "emerald"
+
+const THEME_COLORS = {
+  sand: { color: "oklch(0.85 0.12 50)", name: "Orange" },
+  silver: { color: "oklch(0.75 0.02 260)", name: "Silver" },
+  sapphire: { color: "oklch(0.65 0.2 250)", name: "Blue" },
+  emerald: { color: "oklch(0.7 0.18 160)", name: "Green" },
+}
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -17,6 +24,8 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [themeAccent, setThemeAccent] = useState<ThemeAccent>("sand")
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false)
+  const themeDropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -25,13 +34,30 @@ export default function Home() {
   // Apply theme accent to CSS custom property
   useEffect(() => {
     const root = document.documentElement
-    const themes = {
-      sand: "oklch(0.85 0.12 50)",      // Current warm sand/orange
-      emerald: "oklch(0.7 0.18 160)",   // Cool emerald green
-      sapphire: "oklch(0.65 0.2 250)",  // Deep sapphire blue
-    }
-    root.style.setProperty("--accent", themes[themeAccent])
+    root.style.setProperty("--accent", THEME_COLORS[themeAccent].color)
   }, [themeAccent])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
+        setIsThemeDropdownOpen(false)
+      }
+    }
+
+    if (isThemeDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isThemeDropdownOpen])
+
+  const handleThemeSelect = (theme: ThemeAccent) => {
+    setThemeAccent(theme)
+    setIsThemeDropdownOpen(false)
+  }
 
   // Track scroll progress for dream video background
   const updateScrollProgress = useCallback(() => {
@@ -166,39 +192,42 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
-          {/* Theme color switcher */}
-          <div className="flex items-center gap-2">
+          {/* Theme color switcher dropdown */}
+          <div ref={themeDropdownRef} className="relative">
             <button
-              onClick={() => setThemeAccent("sand")}
-              className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
-                themeAccent === "sand" 
-                  ? "border-2 border-white/80 bg-transparent" 
-                  : "border border-white/30 hover:border-white/60"
-              }`}
+              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+              className="w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 border-2 border-white/80"
               style={{ 
-                backgroundColor: themeAccent === "sand" ? "transparent" : "oklch(0.85 0.12 50)",
-                boxShadow: themeAccent === "sand" ? "inset 0 0 0 4px oklch(0.85 0.12 50)" : "none"
+                backgroundColor: THEME_COLORS[themeAccent].color,
               }}
-              title="Sand accent"
+              title={`Theme: ${THEME_COLORS[themeAccent].name}`}
             />
-            <button
-              onClick={() => setThemeAccent("emerald")}
-              className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
-                themeAccent === "emerald" 
-                  ? "border-2 border-white/80 bg-transparent" 
-                  : "border border-white/30 hover:border-white/60"
-              }`}
-              style={{ 
-                backgroundColor: themeAccent === "emerald" ? "transparent" : "oklch(0.7 0.18 160)",
-                boxShadow: themeAccent === "emerald" ? "inset 0 0 0 4px oklch(0.7 0.18 160)" : "none"
-              }}
-              title="Emerald accent"
-            />
-        </div>
+            
+            {/* Dropdown menu */}
+            {isThemeDropdownOpen && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 flex flex-col gap-2 bg-black/90 backdrop-blur-md border border-white/10 rounded-lg p-2 z-50">
+                {(Object.keys(THEME_COLORS) as ThemeAccent[]).map((theme) => (
+                  <button
+                    key={theme}
+                    onClick={() => handleThemeSelect(theme)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                      themeAccent === theme 
+                        ? "ring-2 ring-white/60 ring-offset-2 ring-offset-black" 
+                        : "opacity-70 hover:opacity-100"
+                    }`}
+                    style={{ 
+                      backgroundColor: THEME_COLORS[theme].color,
+                    }}
+                    title={THEME_COLORS[theme].name}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
 
-        <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
+          <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
             Start
-        </MagneticButton>
+          </MagneticButton>
         </div>
       </nav>
 
