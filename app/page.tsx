@@ -6,6 +6,7 @@ import { ShowcaseSection } from "@/components/sections/showcase-section"
 import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
 import { AnimatedText } from "@/components/animated-text"
+import { FloatingElements } from "@/components/floating-elements"
 import { useRef, useEffect, useState } from "react"
 
 export default function Home() {
@@ -85,6 +86,9 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Floating elements - particles, crosshairs, guide lines */}
+      <FloatingElements />
+
       <nav
         className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-6 py-4 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
@@ -92,11 +96,11 @@ export default function Home() {
           onClick={() => scrollToSection(0)}
           className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
         >
-          <div className="relative h-32 w-32">
+          <div className="relative h-20 w-20 md:h-28 md:w-28 lg:h-36 lg:w-36">
             <img
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
               alt="Zenitram Logo"
-              className="h-full w-full object-contain"
+              className="h-full w-full object-contain drop-shadow-[0_0_15px_rgba(200,180,150,0.3)]"
             />
           </div>
         </button>
