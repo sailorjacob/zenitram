@@ -7,6 +7,7 @@ import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
 import { AnimatedText } from "@/components/animated-text"
 import { DreamVideoBackground } from "@/components/dream-video-background"
+import { HeroFloatingElements } from "@/components/hero-floating-elements"
 import { useRef, useEffect, useState, useCallback } from "react"
 
 type ThemeAccent = "sand" | "silver" | "sapphire" | "emerald"
@@ -241,6 +242,9 @@ export default function Home() {
       >
         {/* Hero Section */}
         <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
+          {/* Floating elements - only visible on hero */}
+          <HeroFloatingElements isVisible={currentSection === 0} />
+          
           <div className="max-w-4xl relative z-10 w-full">
             <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">

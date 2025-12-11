@@ -185,3 +185,76 @@
 .animate-soft-glow {
   animation: soft-glow 5s ease-in-out infinite;
 }
+
+/* Floating elements animations */
+@keyframes float-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(8px, -15px) rotate(45deg);
+  }
+  50% {
+    transform: translate(-4px, -30px) rotate(90deg);
+  }
+  75% {
+    transform: translate(-12px, -15px) rotate(135deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(15px, -20px) scale(1.05);
+  }
+  50% {
+    transform: translate(-15px, 15px) scale(0.95);
+  }
+  75% {
+    transform: translate(20px, 8px) scale(1.02);
+  }
+}
+
+.animate-float-drift {
+  animation: float-drift 20s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-blob {
+  animation: blob 25s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
