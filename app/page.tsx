@@ -9,14 +9,14 @@ import { AnimatedText } from "@/components/animated-text"
 import { DreamVideoBackground } from "@/components/dream-video-background"
 import { useRef, useEffect, useState, useCallback } from "react"
 
-type ThemeAccent = "silver" | "blue"
+type ThemeAccent = "sand" | "emerald" | "sapphire"
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("blue")
+  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("sand")
 
   useEffect(() => {
     setIsLoaded(true)
@@ -26,8 +26,9 @@ export default function Home() {
   useEffect(() => {
     const root = document.documentElement
     const themes = {
-      silver: "oklch(0.75 0.02 260)",   // Cool silver/platinum
-      blue: "oklch(0.65 0.2 250)",      // Deep sapphire blue
+      sand: "oklch(0.85 0.12 50)",      // Current warm sand/orange
+      emerald: "oklch(0.7 0.18 160)",   // Cool emerald green
+      sapphire: "oklch(0.65 0.2 250)",  // Deep sapphire blue
     }
     root.style.setProperty("--accent", themes[themeAccent])
   }, [themeAccent])
@@ -168,36 +169,36 @@ export default function Home() {
           {/* Theme color switcher */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setThemeAccent("silver")}
+              onClick={() => setThemeAccent("sand")}
               className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
-                themeAccent === "silver" 
+                themeAccent === "sand" 
                   ? "border-2 border-white/80 bg-transparent" 
                   : "border border-white/30 hover:border-white/60"
               }`}
               style={{ 
-                backgroundColor: themeAccent === "silver" ? "transparent" : "oklch(0.75 0.02 260)",
-                boxShadow: themeAccent === "silver" ? "inset 0 0 0 4px oklch(0.75 0.02 260)" : "none"
+                backgroundColor: themeAccent === "sand" ? "transparent" : "oklch(0.85 0.12 50)",
+                boxShadow: themeAccent === "sand" ? "inset 0 0 0 4px oklch(0.85 0.12 50)" : "none"
               }}
-              title="Silver accent"
+              title="Sand accent"
             />
             <button
-              onClick={() => setThemeAccent("blue")}
+              onClick={() => setThemeAccent("emerald")}
               className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
-                themeAccent === "blue" 
+                themeAccent === "emerald" 
                   ? "border-2 border-white/80 bg-transparent" 
                   : "border border-white/30 hover:border-white/60"
               }`}
               style={{ 
-                backgroundColor: themeAccent === "blue" ? "transparent" : "oklch(0.65 0.2 250)",
-                boxShadow: themeAccent === "blue" ? "inset 0 0 0 4px oklch(0.65 0.2 250)" : "none"
+                backgroundColor: themeAccent === "emerald" ? "transparent" : "oklch(0.7 0.18 160)",
+                boxShadow: themeAccent === "emerald" ? "inset 0 0 0 4px oklch(0.7 0.18 160)" : "none"
               }}
-              title="Blue accent"
+              title="Emerald accent"
             />
-          </div>
+        </div>
 
-          <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
+        <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
             Start
-          </MagneticButton>
+        </MagneticButton>
         </div>
       </nav>
 
@@ -214,10 +215,10 @@ export default function Home() {
           <div className="max-w-4xl relative z-10 w-full">
             <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">
-                <AnimatedText text="Intelligent Living" variant="wave" shimmer shimmerSpeed="normal" />
+                <AnimatedText text="Intelligent Living" variant="spin" shimmer />
               </span>
               <span className="block">
-                <AnimatedText text="for Modern Homes" variant="wave" shimmer shimmerSpeed="slow" />
+                <AnimatedText text="for Modern Homes" variant="cut" shimmer />
               </span>
             </h1>
             <p className="mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl">

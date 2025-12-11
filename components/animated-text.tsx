@@ -91,6 +91,7 @@ export function AnimatedText({
       style={{
         display: "inline-block",
         position: "relative",
+        overflow: "hidden",
       }}
     >
       {characters.map((char, index) => (
@@ -112,20 +113,19 @@ export function AnimatedText({
           key={shimmerKey}
           style={{
             position: "absolute",
-            top: "50%",
-            left: shimmerActive ? undefined : "-50%",
-            width: "30%",
-            height: "200%",
-            marginTop: "-100%",
+            top: "0",
+            left: shimmerActive ? undefined : "-100%",
+            width: "25%",
+            height: "100%",
             pointerEvents: "none",
             background: `linear-gradient(
               90deg, 
               transparent 0%,
-              rgba(255,255,255,0.03) 15%,
-              rgba(255,255,255,0.15) 35%,
+              rgba(255,255,255,0.05) 20%,
+              rgba(255,255,255,0.2) 40%,
               rgba(255,255,255,0.5) 50%,
-              rgba(255,255,255,0.15) 65%,
-              rgba(255,255,255,0.03) 85%,
+              rgba(255,255,255,0.2) 60%,
+              rgba(255,255,255,0.05) 80%,
               transparent 100%
             )`,
             transform: `skewX(-${shimmerVariation.skew}deg)`,
@@ -192,20 +192,20 @@ export function AnimatedText({
         
         @keyframes glareSwipe {
           0% {
-            left: -50%;
+            left: -100%;
             opacity: 0;
           }
-          10% {
-            opacity: 0.7;
+          5% {
+            opacity: 0.5;
           }
           50% {
             opacity: 1;
           }
-          90% {
-            opacity: 0.7;
+          95% {
+            opacity: 0.5;
           }
           100% {
-            left: 120%;
+            left: 100%;
             opacity: 0;
           }
         }
@@ -213,3 +213,4 @@ export function AnimatedText({
     </span>
   )
 }
+
