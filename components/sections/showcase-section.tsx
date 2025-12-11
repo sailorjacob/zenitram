@@ -24,16 +24,16 @@ export function ShowcaseSection() {
       <div className="grid gap-8 md:grid-cols-3 md:gap-6">
         {[
           {
-            title: "Living Room",
-            status: "All systems active",
+            title: "Lighting & Automation",
+            status: "Smart control systems",
           },
           {
-            title: "Kitchen",
-            status: "Climate optimized",
+            title: "Home Theater & AV",
+            status: "Immersive experiences",
           },
           {
-            title: "Bedroom",
-            status: "Night mode enabled",
+            title: "Security",
+            status: "24/7 protection",
           },
         ].map((room, i) => (
           <div

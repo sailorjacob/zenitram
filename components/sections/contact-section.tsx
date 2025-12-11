@@ -90,10 +90,13 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
             >
               <div className="mb-1 flex items-center gap-2">
                 <MapPin className="h-3 w-3 text-accent" />
-                <span className="font-mono text-xs text-foreground/60">Location</span>
+                <span className="font-mono text-xs text-foreground/60">Locations</span>
               </div>
               <p className="text-base text-foreground md:text-2xl">
                 <AnimatedText text="Santo Domingo, Dominican Republic" variant="dissolve" />
+              </p>
+              <p className="text-base text-foreground/80 md:text-xl mt-1">
+                <AnimatedText text="Miami, Florida, USA" variant="dissolve" />
               </p>
             </div>
           </div>

@@ -9,15 +9,29 @@ import { AnimatedText } from "@/components/animated-text"
 import { DreamVideoBackground } from "@/components/dream-video-background"
 import { useRef, useEffect, useState, useCallback } from "react"
 
+type ThemeAccent = "sand" | "emerald" | "sapphire"
+
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("sand")
 
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
+  // Apply theme accent to CSS custom property
+  useEffect(() => {
+    const root = document.documentElement
+    const themes = {
+      sand: "oklch(0.85 0.12 50)",      // Current warm sand/orange
+      emerald: "oklch(0.7 0.18 160)",   // Cool emerald green
+      sapphire: "oklch(0.65 0.2 250)",  // Deep sapphire blue
+    }
+    root.style.setProperty("--accent", themes[themeAccent])
+  }, [themeAccent])
 
   // Track scroll progress for dream video background
   const updateScrollProgress = useCallback(() => {
@@ -119,18 +133,44 @@ export default function Home() {
       <nav
         className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-6 py-4 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
-        <button
-          onClick={() => scrollToSection(0)}
-          className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
-        >
-          <div className="relative h-28 w-28 md:h-32 md:w-32">
-            <img
-              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
-              alt="Zenitram Logo"
-              className="h-full w-full object-contain"
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => scrollToSection(0)}
+            className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
+          >
+            <div className="relative h-28 w-28 md:h-32 md:w-32">
+              <img
+                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
+                alt="Zenitram Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+          </button>
+
+          {/* Theme color switcher */}
+          <div className="hidden md:flex items-center gap-2 ml-2">
+            <button
+              onClick={() => setThemeAccent("sand")}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                themeAccent === "sand" 
+                  ? "ring-2 ring-white/50 ring-offset-1 ring-offset-black scale-110" 
+                  : "opacity-70 hover:opacity-100 hover:scale-110"
+              }`}
+              style={{ backgroundColor: "oklch(0.85 0.12 50)" }}
+              title="Sand accent"
+            />
+            <button
+              onClick={() => setThemeAccent("emerald")}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                themeAccent === "emerald" 
+                  ? "ring-2 ring-white/50 ring-offset-1 ring-offset-black scale-110" 
+                  : "opacity-70 hover:opacity-100 hover:scale-110"
+              }`}
+              style={{ backgroundColor: "oklch(0.7 0.18 160)" }}
+              title="Emerald accent"
             />
           </div>
-        </button>
+        </div>
 
         <div className="hidden items-center gap-8 md:flex">
           {["Home", "Features", "Solutions", "Technology", "Showcase"].map((item, index) => (
@@ -169,10 +209,10 @@ export default function Home() {
           <div className="max-w-4xl relative z-10 w-full">
             <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">
-                <AnimatedText text="Intelligent Living" variant="spin" />
+                <AnimatedText text="Intelligent Living" variant="spin" shimmer />
               </span>
               <span className="block">
-                <AnimatedText text="for Modern Homes" variant="cut" />
+                <AnimatedText text="for Modern Homes" variant="cut" shimmer />
               </span>
             </h1>
             <p className="mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl">

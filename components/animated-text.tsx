@@ -1,17 +1,57 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface AnimatedTextProps {
   text: string
   className?: string
   delay?: number
   variant?: "spin" | "dissolve" | "cut"
+  shimmer?: boolean
 }
 
-export function AnimatedText({ text, className = "", delay = 0, variant = "spin" }: AnimatedTextProps) {
+export function AnimatedText({ text, className = "", delay = 0, variant = "spin", shimmer = false }: AnimatedTextProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [shimmerPosition, setShimmerPosition] = useState(-100)
   const characters = text.split("")
+
+  // Auto-shimmer effect that runs periodically
+  useEffect(() => {
+    if (!shimmer) return
+    
+    const runShimmer = () => {
+      setShimmerPosition(-100)
+      const start = Date.now()
+      const duration = 1500
+      
+      const animate = () => {
+        const elapsed = Date.now() - start
+        const progress = elapsed / duration
+        
+        if (progress < 1) {
+          setShimmerPosition(-100 + (progress * 300))
+          requestAnimationFrame(animate)
+        } else {
+          setShimmerPosition(-100)
+        }
+      }
+      
+      requestAnimationFrame(animate)
+    }
+    
+    // Initial shimmer after a delay
+    const initialTimeout = setTimeout(runShimmer, 1000 + delay)
+    
+    // Repeat shimmer every 4-6 seconds randomly
+    const interval = setInterval(() => {
+      runShimmer()
+    }, 4000 + Math.random() * 2000)
+    
+    return () => {
+      clearTimeout(initialTimeout)
+      clearInterval(interval)
+    }
+  }, [shimmer, delay])
 
   const getVariant = (index: number) => {
     if (variant === "spin") {
@@ -36,6 +76,7 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
       onMouseLeave={() => setIsHovered(false)}
       style={{
         display: "inline-block",
+        position: "relative",
       }}
     >
       {characters.map((char, index) => (
@@ -50,6 +91,31 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "spin"
           {char === " " ? "\u00A0" : char}
         </span>
       ))}
+      
+      {/* Metallic shimmer overlay */}
+      {shimmer && (
+        <span
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: "none",
+            background: `linear-gradient(
+              120deg,
+              transparent ${shimmerPosition}%,
+              rgba(255, 255, 255, 0.1) ${shimmerPosition + 10}%,
+              rgba(255, 255, 255, 0.4) ${shimmerPosition + 20}%,
+              rgba(255, 255, 255, 0.1) ${shimmerPosition + 30}%,
+              transparent ${shimmerPosition + 40}%
+            )`,
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            mixBlendMode: "overlay",
+          }}
+        />
+      )}
 
       <style jsx global>{`
         @keyframes spinCharacter {
