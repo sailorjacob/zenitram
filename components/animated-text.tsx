@@ -91,7 +91,6 @@ export function AnimatedText({
       style={{
         display: "inline-block",
         position: "relative",
-        overflow: "hidden",
       }}
     >
       {characters.map((char, index) => (
@@ -107,34 +106,32 @@ export function AnimatedText({
         </span>
       ))}
       
-      {/* Shimmer glare overlay with feathered edges */}
+      {/* Shimmer glare overlay - thin streak */}
       {shimmer && (
         <span
           key={shimmerKey}
           style={{
             position: "absolute",
-            top: "-20%",
-            left: shimmerActive ? undefined : "-150%",
-            width: `${shimmerVariation.width}%`,
-            height: "140%",
+            top: "50%",
+            left: shimmerActive ? undefined : "-50%",
+            width: "30%",
+            height: "200%",
+            marginTop: "-100%",
             pointerEvents: "none",
             background: `linear-gradient(
-              100deg, 
-              transparent 0%, 
-              transparent 20%,
-              rgba(255,255,255,0.08) 30%,
-              rgba(255,255,255,0.25) 42%,
+              90deg, 
+              transparent 0%,
+              rgba(255,255,255,0.03) 15%,
+              rgba(255,255,255,0.15) 35%,
               rgba(255,255,255,0.5) 50%,
-              rgba(255,255,255,0.25) 58%,
-              rgba(255,255,255,0.08) 70%,
-              transparent 80%,
+              rgba(255,255,255,0.15) 65%,
+              rgba(255,255,255,0.03) 85%,
               transparent 100%
             )`,
             transform: `skewX(-${shimmerVariation.skew}deg)`,
             animation: shimmerActive 
               ? `glareSwipe ${config.duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`
               : "none",
-            filter: "blur(1px)",
           }}
         />
       )}
@@ -195,20 +192,20 @@ export function AnimatedText({
         
         @keyframes glareSwipe {
           0% {
-            left: -150%;
+            left: -50%;
             opacity: 0;
           }
-          5% {
-            opacity: 0.6;
+          10% {
+            opacity: 0.7;
           }
           50% {
             opacity: 1;
           }
-          95% {
-            opacity: 0.6;
+          90% {
+            opacity: 0.7;
           }
           100% {
-            left: 150%;
+            left: 120%;
             opacity: 0;
           }
         }
