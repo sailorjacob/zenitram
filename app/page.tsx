@@ -214,10 +214,10 @@ export default function Home() {
           <div className="max-w-4xl relative z-10 w-full">
             <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">
-                <AnimatedText text="Intelligent Living" variant="wave" shimmer />
+                <AnimatedText text="Intelligent Living" variant="wave" shimmer shimmerSpeed="normal" />
               </span>
               <span className="block">
-                <AnimatedText text="for Modern Homes" variant="wave" shimmer />
+                <AnimatedText text="for Modern Homes" variant="wave" shimmer shimmerSpeed="slow" />
               </span>
             </h1>
             <p className="mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl">

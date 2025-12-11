@@ -41,10 +41,10 @@ export function ContactSection({ scrollToSection }: { scrollToSection?: (index: 
           >
             <h2 className="mb-2 font-sans text-4xl font-light leading-[1.05] tracking-tight text-foreground md:mb-3 md:text-7xl lg:text-8xl">
               <span className="block">
-                <AnimatedText text="Start your" variant="wave" shimmer />
+                <AnimatedText text="Start your" variant="wave" shimmer shimmerSpeed="normal" />
               </span>
               <span className="block text-accent">
-                <AnimatedText text="automation" variant="wave" shimmer />
+                <AnimatedText text="automation" variant="wave" shimmer shimmerSpeed="slow" />
               </span>
             </h2>
             <p className="font-mono text-xs text-foreground/60 md:text-base">

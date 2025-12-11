@@ -48,7 +48,7 @@ export function FeaturesSection() {
       >
         <h2 className="mb-3 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl text-center">
           <span className="block">
-            <AnimatedText text="Smart Features" variant="wave" shimmer />
+            <AnimatedText text="Smart Features" variant="wave" shimmer shimmerSpeed="fast" />
           </span>
         </h2>
         <p className="font-mono text-xs text-foreground/60 md:text-sm text-center">

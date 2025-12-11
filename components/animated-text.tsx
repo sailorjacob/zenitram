@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 interface AnimatedTextProps {
   text: string
@@ -8,35 +8,64 @@ interface AnimatedTextProps {
   delay?: number
   variant?: "wave" | "dissolve" | "cut"
   shimmer?: boolean
+  shimmerSpeed?: "fast" | "normal" | "slow"
 }
 
-export function AnimatedText({ text, className = "", delay = 0, variant = "wave", shimmer = false }: AnimatedTextProps) {
+export function AnimatedText({ 
+  text, 
+  className = "", 
+  delay = 0, 
+  variant = "wave", 
+  shimmer = false,
+  shimmerSpeed = "normal"
+}: AnimatedTextProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [shimmerActive, setShimmerActive] = useState(false)
+  const [shimmerKey, setShimmerKey] = useState(0)
   const characters = text.split("")
+
+  // Generate consistent random variations based on text
+  const shimmerVariation = useMemo(() => {
+    const hash = text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    return {
+      width: 80 + (hash % 40), // 80-120%
+      skew: 15 + (hash % 15),  // 15-30 degrees
+      interval: 4000 + (hash % 4000), // 4-8 seconds
+    }
+  }, [text])
+
+  // Speed presets
+  const speedConfig = {
+    fast: { duration: 0.8, interval: 3000 },
+    normal: { duration: 1.2, interval: shimmerVariation.interval },
+    slow: { duration: 1.8, interval: 6000 },
+  }
+
+  const config = speedConfig[shimmerSpeed]
 
   // Auto-shimmer effect that runs periodically
   useEffect(() => {
     if (!shimmer) return
     
     const runShimmer = () => {
+      setShimmerKey(k => k + 1)
       setShimmerActive(true)
-      setTimeout(() => setShimmerActive(false), 1500)
+      setTimeout(() => setShimmerActive(false), config.duration * 1000 + 200)
     }
     
     // Initial shimmer after a delay
     const initialTimeout = setTimeout(runShimmer, 1500 + delay)
     
-    // Repeat shimmer every 5-7 seconds randomly
+    // Repeat shimmer with variation
     const interval = setInterval(() => {
       runShimmer()
-    }, 5000 + Math.random() * 2000)
+    }, config.interval + Math.random() * 2000)
     
     return () => {
       clearTimeout(initialTimeout)
       clearInterval(interval)
     }
-  }, [shimmer, delay])
+  }, [shimmer, delay, config.duration, config.interval])
 
   const getVariant = (index: number) => {
     if (variant === "wave") {
@@ -62,6 +91,7 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
       style={{
         display: "inline-block",
         position: "relative",
+        overflow: "hidden",
       }}
     >
       {characters.map((char, index) => (
@@ -77,19 +107,34 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
         </span>
       ))}
       
-      {/* Shimmer glare overlay */}
+      {/* Shimmer glare overlay with feathered edges */}
       {shimmer && (
         <span
-          className={shimmerActive ? "shimmer-glare-active" : "shimmer-glare"}
+          key={shimmerKey}
           style={{
             position: "absolute",
-            top: 0,
-            left: "-100%",
-            width: "100%",
-            height: "100%",
+            top: "-20%",
+            left: shimmerActive ? undefined : "-150%",
+            width: `${shimmerVariation.width}%`,
+            height: "140%",
             pointerEvents: "none",
-            background: "linear-gradient(120deg, transparent 0%, transparent 30%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 55%, transparent 70%, transparent 100%)",
-            transform: "skewX(-20deg)",
+            background: `linear-gradient(
+              100deg, 
+              transparent 0%, 
+              transparent 20%,
+              rgba(255,255,255,0.08) 30%,
+              rgba(255,255,255,0.25) 42%,
+              rgba(255,255,255,0.5) 50%,
+              rgba(255,255,255,0.25) 58%,
+              rgba(255,255,255,0.08) 70%,
+              transparent 80%,
+              transparent 100%
+            )`,
+            transform: `skewX(-${shimmerVariation.skew}deg)`,
+            animation: shimmerActive 
+              ? `glareSwipe ${config.duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`
+              : "none",
+            filter: "blur(1px)",
           }}
         />
       )}
@@ -150,27 +195,22 @@ export function AnimatedText({ text, className = "", delay = 0, variant = "wave"
         
         @keyframes glareSwipe {
           0% {
-            left: -100%;
+            left: -150%;
             opacity: 0;
           }
-          10% {
+          5% {
+            opacity: 0.6;
+          }
+          50% {
             opacity: 1;
           }
-          90% {
-            opacity: 1;
+          95% {
+            opacity: 0.6;
           }
           100% {
-            left: 200%;
+            left: 150%;
             opacity: 0;
           }
-        }
-        
-        .shimmer-glare {
-          opacity: 0;
-        }
-        
-        .shimmer-glare-active {
-          animation: glareSwipe 1.5s ease-in-out forwards;
         }
       `}</style>
     </span>

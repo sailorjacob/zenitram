@@ -23,7 +23,7 @@ export function TechnologySection() {
                 <AnimatedText text="cutting-edge" variant="wave" />
               </span>
               <span className="block text-accent">
-                <AnimatedText text="technology" variant="wave" shimmer />
+                <AnimatedText text="technology" variant="wave" shimmer shimmerSpeed="slow" />
               </span>
             </h2>
           </div>

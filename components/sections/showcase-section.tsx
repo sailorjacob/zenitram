@@ -14,7 +14,7 @@ export function ShowcaseSection() {
         }`}
       >
         <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-          <AnimatedText text="Live Demo" variant="wave" shimmer />
+          <AnimatedText text="Live Demo" variant="wave" shimmer shimmerSpeed="fast" />
         </h2>
         <p className="font-mono text-sm text-foreground/60 md:text-base">
           <AnimatedText text="Interactive showcase" variant="dissolve" />
