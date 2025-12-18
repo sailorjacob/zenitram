@@ -241,36 +241,36 @@ export default function Home() {
       >
         {/* Hero Section */}
         <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
-          {/* Subtle decorative elements - CSS only, no JS */}
+          {/* Left-side decorative elements - CSS only, no JS */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* Animated gradient orbs */}
-            <div className="absolute -left-1/4 top-1/4 h-96 w-96 animate-blob rounded-full bg-accent/5 blur-3xl" />
-            <div className="absolute -right-1/4 top-1/3 h-96 w-96 animate-blob animation-delay-2000 rounded-full bg-accent/3 blur-3xl" />
+            {/* Large animated gradient orbs on left */}
+            <div className="absolute -left-32 top-1/4 h-[600px] w-[600px] animate-blob rounded-full bg-accent/8 blur-3xl" />
+            <div className="absolute left-0 top-1/2 h-[500px] w-[500px] animate-blob animation-delay-2000 rounded-full bg-accent/6 blur-3xl" />
+            <div className="absolute -left-20 bottom-1/4 h-[550px] w-[550px] animate-blob animation-delay-4000 rounded-full bg-accent/7 blur-3xl" />
             
-            {/* Center rotating rings */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08]">
-              <div className="relative h-64 w-64 md:h-80 md:w-80">
-                <div className="absolute inset-0 animate-spin-slow rounded-full border border-dashed border-accent/40" style={{ animationDuration: "50s" }} />
-                <div className="absolute inset-8 animate-spin-slow rounded-full border border-dotted border-accent/30" style={{ animationDuration: "35s", animationDirection: "reverse" }} />
+            {/* Rotating rings on left */}
+            <div className="absolute left-24 top-1/3 opacity-[0.12]">
+              <div className="relative h-96 w-96">
+                <div className="absolute inset-0 animate-spin-slow rounded-full border-2 border-dashed border-accent/50" style={{ animationDuration: "45s" }} />
+                <div className="absolute inset-12 animate-spin-slow rounded-full border-2 border-dotted border-accent/40" style={{ animationDuration: "30s", animationDirection: "reverse" }} />
+                <div className="absolute inset-24 animate-spin-slow rounded-full border border-accent/30" style={{ animationDuration: "60s" }} />
               </div>
             </div>
             
-            {/* Corner accents - hidden on mobile */}
-            <div className="hidden md:block absolute left-8 top-32 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "4s" }} />
-            <div className="hidden md:block absolute right-8 top-32 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "5s" }} />
-            <div className="hidden md:block absolute bottom-32 left-8 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "6s" }} />
-            <div className="hidden md:block absolute bottom-32 right-8 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "4.5s" }} />
-            
-            {/* Subtle grid pattern */}
-            <div className="absolute inset-0 opacity-[0.02]">
-              <div
-                className="h-full w-full"
-                style={{
-                  backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 1) 1px, transparent 1px)",
-                  backgroundSize: "60px 60px",
-                }}
-              />
+            {/* Additional rotating rings on left - lower */}
+            <div className="absolute left-32 bottom-1/4 opacity-[0.1]">
+              <div className="relative h-80 w-80">
+                <div className="absolute inset-0 animate-spin-slow rounded-full border-2 border-accent/45" style={{ animationDuration: "55s", animationDirection: "reverse" }} />
+                <div className="absolute inset-16 animate-spin-slow rounded-full border border-dashed border-accent/35" style={{ animationDuration: "40s" }} />
+              </div>
             </div>
+            
+            {/* Left side accent circles */}
+            <div className="absolute left-12 top-24 h-20 w-20 animate-pulse rounded-full border-2 border-accent/25 bg-accent/5" style={{ animationDuration: "4s" }} />
+            <div className="absolute left-8 top-1/2 h-16 w-16 animate-pulse rounded-full border-2 border-accent/30 bg-accent/5" style={{ animationDuration: "5s" }} />
+            <div className="absolute left-16 bottom-32 h-24 w-24 animate-pulse rounded-full border-2 border-accent/20 bg-accent/5" style={{ animationDuration: "6s" }} />
+            <div className="absolute left-40 top-1/4 h-12 w-12 animate-pulse rounded-full border border-accent/35" style={{ animationDuration: "4.5s" }} />
+            <div className="absolute left-20 bottom-1/3 h-14 w-14 animate-pulse rounded-full border border-accent/28" style={{ animationDuration: "5.5s" }} />
           </div>
           
           <div className="max-w-4xl relative z-10 w-full">
