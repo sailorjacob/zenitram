@@ -241,6 +241,38 @@ export default function Home() {
       >
         {/* Hero Section */}
         <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
+          {/* Subtle decorative elements - CSS only, no JS */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Animated gradient orbs */}
+            <div className="absolute -left-1/4 top-1/4 h-96 w-96 animate-blob rounded-full bg-accent/5 blur-3xl" />
+            <div className="absolute -right-1/4 top-1/3 h-96 w-96 animate-blob animation-delay-2000 rounded-full bg-accent/3 blur-3xl" />
+            
+            {/* Center rotating rings */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08]">
+              <div className="relative h-64 w-64 md:h-80 md:w-80">
+                <div className="absolute inset-0 animate-spin-slow rounded-full border border-dashed border-accent/40" style={{ animationDuration: "50s" }} />
+                <div className="absolute inset-8 animate-spin-slow rounded-full border border-dotted border-accent/30" style={{ animationDuration: "35s", animationDirection: "reverse" }} />
+              </div>
+            </div>
+            
+            {/* Corner accents - hidden on mobile */}
+            <div className="hidden md:block absolute left-8 top-32 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "4s" }} />
+            <div className="hidden md:block absolute right-8 top-32 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "5s" }} />
+            <div className="hidden md:block absolute bottom-32 left-8 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "6s" }} />
+            <div className="hidden md:block absolute bottom-32 right-8 h-12 w-12 animate-pulse rounded-full border border-accent/20" style={{ animationDuration: "4.5s" }} />
+            
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 opacity-[0.02]">
+              <div
+                className="h-full w-full"
+                style={{
+                  backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 1) 1px, transparent 1px)",
+                  backgroundSize: "60px 60px",
+                }}
+              />
+            </div>
+          </div>
+          
           <div className="max-w-4xl relative z-10 w-full">
             <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
               <span className="block">
