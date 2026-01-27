@@ -31,6 +31,7 @@ export default function Home() {
   const themeDropdownRef = useRef<HTMLDivElement>(null)
   const [isOnVideoPage, setIsOnVideoPage] = useState(false)
   const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
+  const [windowHeight, setWindowHeight] = useState(0)
 
   const features = [
     {
@@ -62,6 +63,18 @@ export default function Home() {
   useEffect(() => {
     setIsLoaded(true)
     
+    // Set window height for SSR safety
+    if (typeof window !== 'undefined') {
+      setWindowHeight(window.innerHeight)
+      
+      const handleResize = () => setWindowHeight(window.innerHeight)
+      window.addEventListener('resize', handleResize)
+      
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
     // Preload video metadata for scrubbing
     if (video1Ref.current) {
       video1Ref.current.load()
@@ -121,7 +134,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (!scrollContainerRef.current || !verticalScrollRef.current) return
+      if (!scrollContainerRef.current || !verticalScrollRef.current || typeof window === 'undefined') return
 
       const sectionWidth = scrollContainerRef.current.offsetWidth
       const scrollLeft = scrollContainerRef.current.scrollLeft
@@ -131,7 +144,8 @@ export default function Home() {
       
       // Check if we're on the video page
       const verticalScroll = verticalScrollRef.current.scrollTop
-      const isVideoPageVisible = verticalScroll > window.innerHeight * 0.3
+      const currentWindowHeight = window.innerHeight
+      const isVideoPageVisible = verticalScroll > currentWindowHeight * 0.3
 
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         // If at the last section and scrolling down, allow vertical scroll to video page
@@ -141,7 +155,7 @@ export default function Home() {
             top: e.deltaY,
             behavior: "instant",
           })
-          setIsOnVideoPage(verticalScroll > window.innerHeight * 0.5)
+          setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.5)
           return
         }
         
@@ -159,7 +173,7 @@ export default function Home() {
               top: e.deltaY,
               behavior: "instant",
             })
-            setIsOnVideoPage(verticalScroll > window.innerHeight * 0.5)
+            setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.5)
           }
           return
         }
@@ -198,17 +212,18 @@ export default function Home() {
     }
 
     const handleVerticalScroll = () => {
-      if (!verticalScrollRef.current) return
+      if (!verticalScrollRef.current || typeof window === 'undefined') return
       const verticalScroll = verticalScrollRef.current.scrollTop
       setVerticalScrollPosition(verticalScroll)
-      setIsOnVideoPage(verticalScroll > window.innerHeight * 0.3)
+      
+      const currentWindowHeight = window.innerHeight
+      setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
       
       // Video scrubbing logic
-      const windowHeight = window.innerHeight
-      const video1Start = windowHeight
-      const video1End = windowHeight * 2
-      const video2Start = windowHeight * 2
-      const video2End = windowHeight * 3
+      const video1Start = currentWindowHeight
+      const video1End = currentWindowHeight * 2
+      const video2Start = currentWindowHeight * 2
+      const video2End = currentWindowHeight * 3
       
       // First video scrubbing
       if (video1Ref.current && verticalScroll >= video1Start && verticalScroll <= video1End) {
@@ -475,7 +490,9 @@ export default function Home() {
           <div 
             className="w-full max-w-4xl px-8 text-center"
             style={{
-              transform: `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - window.innerHeight) / window.innerHeight) * 200}%)`,
+              transform: windowHeight > 0 
+                ? `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - windowHeight) / windowHeight) * 200}%)` 
+                : 'rotateX(45deg) translateZ(-200px) translateY(100%)',
               transformOrigin: "50% 100%",
               transformStyle: "preserve-3d"
             }}
