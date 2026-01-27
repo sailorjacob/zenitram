@@ -20,15 +20,55 @@ const THEME_COLORS = {
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const verticalScrollRef = useRef<HTMLDivElement>(null)
+  const video1Ref = useRef<HTMLVideoElement>(null)
+  const video2Ref = useRef<HTMLVideoElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [themeAccent, setThemeAccent] = useState<ThemeAccent>("sapphire")
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false)
   const themeDropdownRef = useRef<HTMLDivElement>(null)
+  const [isOnVideoPage, setIsOnVideoPage] = useState(false)
+  const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
+
+  const features = [
+    {
+      title: "Intelligent Lighting",
+      description: "Adaptive lighting that responds to your circadian rhythm, adjusts color temperature throughout the day, and learns your preferences for personalized ambiance."
+    },
+    {
+      title: "Climate Control",
+      description: "Precise temperature management with AI-powered learning, geofencing integration, and predictive adjustments based on weather patterns."
+    },
+    {
+      title: "Security Systems",
+      description: "Advanced monitoring with real-time alerts, multi-point door and window sensors, integrated camera feeds, and automated response protocols."
+    },
+    {
+      title: "Audio Integration",
+      description: "Whole-home audio distribution with room-by-room control, streaming services integration, and voice-activated command capabilities."
+    },
+    {
+      title: "Energy Management",
+      description: "Real-time consumption monitoring, automated optimization, renewable energy integration, and detailed usage analytics for sustainability."
+    },
+    {
+      title: "Mobile Control",
+      description: "Seamless app-based control from anywhere in the world with instant feedback, automation scheduling, and emergency override features."
+    }
+  ]
 
   useEffect(() => {
     setIsLoaded(true)
+    
+    // Preload video metadata for scrubbing
+    if (video1Ref.current) {
+      video1Ref.current.load()
+    }
+    if (video2Ref.current) {
+      video2Ref.current.load()
+    }
   }, [])
 
   // Apply theme accent to CSS custom property
@@ -81,25 +121,66 @@ export default function Home() {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      if (!scrollContainerRef.current || !verticalScrollRef.current) return
+
+      const sectionWidth = scrollContainerRef.current.offsetWidth
+      const scrollLeft = scrollContainerRef.current.scrollLeft
+      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+      const isAtEnd = scrollLeft >= maxScroll - 10 // Small threshold for rounding errors
+      const isAtStart = scrollLeft <= 10
+      
+      // Check if we're on the video page
+      const verticalScroll = verticalScrollRef.current.scrollTop
+      const isVideoPageVisible = verticalScroll > window.innerHeight * 0.3
+
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault()
-
-        if (!scrollContainerRef.current) return
-
-        scrollContainerRef.current.scrollBy({
-          left: e.deltaY,
-          behavior: "instant",
-        })
-
-        const sectionWidth = scrollContainerRef.current.offsetWidth
-        const scrollLeft = scrollContainerRef.current.scrollLeft
-        const newSection = Math.round(scrollLeft / sectionWidth)
-
-        if (newSection !== currentSection) {
-          setCurrentSection(newSection)
+        // If at the last section and scrolling down, allow vertical scroll to video page
+        if (isAtEnd && e.deltaY > 0 && !isVideoPageVisible) {
+          e.preventDefault()
+          verticalScrollRef.current.scrollBy({
+            top: e.deltaY,
+            behavior: "instant",
+          })
+          setIsOnVideoPage(verticalScroll > window.innerHeight * 0.5)
+          return
         }
         
-        updateScrollProgress()
+        // If on video page and scrolling up, go back to horizontal sections
+        if (verticalScroll > 0 && e.deltaY < 0) {
+          e.preventDefault()
+          if (verticalScroll - Math.abs(e.deltaY) <= 0) {
+            verticalScrollRef.current.scrollTo({
+              top: 0,
+              behavior: "instant",
+            })
+            setIsOnVideoPage(false)
+          } else {
+            verticalScrollRef.current.scrollBy({
+              top: e.deltaY,
+              behavior: "instant",
+            })
+            setIsOnVideoPage(verticalScroll > window.innerHeight * 0.5)
+          }
+          return
+        }
+
+        // Normal horizontal scroll
+        if (!isVideoPageVisible) {
+          e.preventDefault()
+          scrollContainerRef.current.scrollBy({
+            left: e.deltaY,
+            behavior: "instant",
+          })
+
+          const newScrollLeft = scrollContainerRef.current.scrollLeft
+          const newSection = Math.round(newScrollLeft / sectionWidth)
+
+          if (newSection !== currentSection) {
+            setCurrentSection(newSection)
+          }
+          
+          updateScrollProgress()
+        }
       }
     }
 
@@ -116,48 +197,90 @@ export default function Home() {
       }
     }
 
+    const handleVerticalScroll = () => {
+      if (!verticalScrollRef.current) return
+      const verticalScroll = verticalScrollRef.current.scrollTop
+      setVerticalScrollPosition(verticalScroll)
+      setIsOnVideoPage(verticalScroll > window.innerHeight * 0.3)
+      
+      // Video scrubbing logic
+      const windowHeight = window.innerHeight
+      const video1Start = windowHeight
+      const video1End = windowHeight * 2
+      const video2Start = windowHeight * 2
+      const video2End = windowHeight * 3
+      
+      // First video scrubbing
+      if (video1Ref.current && verticalScroll >= video1Start && verticalScroll <= video1End) {
+        const video1Progress = (verticalScroll - video1Start) / (video1End - video1Start)
+        const video1Time = video1Progress * video1Ref.current.duration
+        if (!isNaN(video1Time)) {
+          video1Ref.current.currentTime = video1Time
+        }
+      }
+      
+      // Second video scrubbing
+      if (video2Ref.current && verticalScroll >= video2Start && verticalScroll <= video2End) {
+        const video2Progress = (verticalScroll - video2Start) / (video2End - video2Start)
+        const video2Time = video2Progress * video2Ref.current.duration
+        if (!isNaN(video2Time)) {
+          video2Ref.current.currentTime = video2Time
+        }
+      }
+    }
+
     const container = scrollContainerRef.current
-    if (container) {
-      container.addEventListener("wheel", handleWheel, { passive: false })
+    const verticalContainer = verticalScrollRef.current
+    
+    if (container && verticalContainer) {
+      verticalContainer.addEventListener("wheel", handleWheel, { passive: false })
       container.addEventListener("scroll", handleScroll, { passive: true })
+      verticalContainer.addEventListener("scroll", handleVerticalScroll, { passive: true })
     }
 
     return () => {
-      if (container) {
-        container.removeEventListener("wheel", handleWheel)
+      if (container && verticalContainer) {
+        verticalContainer.removeEventListener("wheel", handleWheel)
         container.removeEventListener("scroll", handleScroll)
+        verticalContainer.removeEventListener("scroll", handleVerticalScroll)
       }
     }
   }, [currentSection, updateScrollProgress])
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-black">
-      {/* Dream video background with circular portal effect */}
-      <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
-      
-      <div className="fixed inset-0 z-[1] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(5, 5, 8, 0.7) 25%, rgba(3, 3, 6, 0.65) 50%, rgba(8, 8, 12, 0.7) 75%, rgba(0, 0, 0, 0.75) 100%)",
-          }}
-        />
-        {/* Subtle cream grid overlay */}
-        <div className="absolute inset-0 opacity-[0.02]">
+    <main 
+      ref={verticalScrollRef}
+      className="relative h-screen w-full overflow-y-auto overflow-x-hidden bg-black"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
+      {/* First page - horizontal slides */}
+      <div className="relative h-screen w-full">
+        {/* Dream video background with circular portal effect */}
+        <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
+        
+        <div className="fixed inset-0 z-[1] pointer-events-none" style={{ top: isOnVideoPage ? '-100vh' : '0' }}>
           <div
-            className="h-full w-full"
+            className="absolute inset-0"
             style={{
-              backgroundImage:
-                "linear-gradient(0deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent)",
-              backgroundSize: "80px 80px",
+              background:
+                "linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(5, 5, 8, 0.7) 25%, rgba(3, 3, 6, 0.65) 50%, rgba(8, 8, 12, 0.7) 75%, rgba(0, 0, 0, 0.75) 100%)",
             }}
           />
+          {/* Subtle cream grid overlay */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div
+              className="h-full w-full"
+              style={{
+                backgroundImage:
+                  "linear-gradient(0deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent)",
+                backgroundSize: "80px 80px",
+              }}
+            />
+          </div>
         </div>
-      </div>
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-opacity duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-all duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"} ${isOnVideoPage ? "opacity-0 pointer-events-none" : ""}`}
       >
         <button
           onClick={() => scrollToSection(0)}
@@ -231,14 +354,14 @@ export default function Home() {
         </div>
       </nav>
 
-      <div
-        ref={scrollContainerRef}
-        data-scroll-container
-        className={`relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
+        <div
+          ref={scrollContainerRef}
+          data-scroll-container
+          className={`relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
         {/* Hero Section */}
         <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
           {/* Left-side decorative elements - CSS only, no JS */}
@@ -325,6 +448,104 @@ export default function Home() {
         <section className="relative flex h-screen w-screen shrink-0 items-center px-4 pt-24 md:px-12 md:pt-0 lg:px-16">
           <ContactSection scrollToSection={scrollToSection} />
         </section>
+        </div>
+      </div>
+
+      {/* First video page - Scroll-controlled with Star Wars text */}
+      <div className="relative h-screen w-full overflow-hidden">
+        {/* Scroll-controlled video background */}
+        <video
+          ref={video1Ref}
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source
+            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
+            type="video/mp4"
+          />
+        </video>
+        
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/40" />
+        
+        {/* Star Wars style scrolling text */}
+        <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
+          <div 
+            className="w-full max-w-4xl px-8 text-center"
+            style={{
+              transform: `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - window.innerHeight) / window.innerHeight) * 200}%)`,
+              transformOrigin: "50% 100%",
+              transformStyle: "preserve-3d"
+            }}
+          >
+            <div className="space-y-16">
+              <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
+                textShadow: "0 0 30px currentColor, 0 0 60px currentColor",
+                letterSpacing: "0.2em"
+              }}>
+                ZENITRAM
+              </h2>
+              
+              <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.9)" }}>
+                INTELLIGENT LIVING FEATURES
+              </div>
+              
+              {features.map((feature, index) => (
+                <div key={index} className="mb-24 opacity-90">
+                  <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
+                    textShadow: "0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)",
+                    letterSpacing: "0.1em"
+                  }}>
+                    {feature.title.toUpperCase()}
+                  </h3>
+                  <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ textShadow: "0 2px 15px rgba(0, 0, 0, 0.9)" }}>
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+              
+              <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
+                textShadow: "0 0 25px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)"
+              }}>
+                Experience the future of intelligent living
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Second video page - Scroll-controlled */}
+      <div className="relative h-screen w-full overflow-hidden">
+        {/* Scroll-controlled video background */}
+        <video
+          ref={video2Ref}
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source
+            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/zenitram.mp4"
+            type="video/mp4"
+          />
+        </video>
+        
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
+        
+        {/* Optional content */}
+        <div className="relative z-10 flex h-full w-full items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-6xl font-bold text-foreground mb-4" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.8)" }}>
+              Welcome Home
+            </h2>
+            <p className="text-xl text-foreground/80" style={{ textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)" }}>
+              The future of intelligent living
+            </p>
+          </div>
+        </div>
       </div>
 
       <style jsx global>{`
