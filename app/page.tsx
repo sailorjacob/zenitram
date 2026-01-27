@@ -228,18 +228,19 @@ export default function Home() {
       
       // First video scrubbing
       if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
-        const video1Progress = Math.min(1, (verticalScroll - video1Start) / (video1End - video1Start))
+        const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
         const video1Time = video1Progress * video1Ref.current.duration
-        if (!isNaN(video1Time)) {
-          video1Ref.current.currentTime = video1Time
+        if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
+          // Clamp to video duration
+          video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
           
           // Mark video 1 as complete when we reach 100% through
           if (video1Progress >= 1.0 && !video1Complete) {
             setVideo1Complete(true)
           }
           
-          // Reset completion if scrolling back
-          if (video1Progress < 0.8 && video1Complete) {
+          // Reset completion only if scrolling back to very beginning
+          if (video1Progress < 0.1 && video1Complete) {
             setVideo1Complete(false)
           }
         }
@@ -253,18 +254,19 @@ export default function Home() {
       
       // Second video scrubbing
       if (video2Ref.current && verticalScroll >= video2Start && verticalScroll < video2End) {
-        const video2Progress = Math.min(1, (verticalScroll - video2Start) / (video2End - video2Start))
+        const video2Progress = Math.min(1, Math.max(0, (verticalScroll - video2Start) / (video2End - video2Start)))
         const video2Time = video2Progress * video2Ref.current.duration
-        if (!isNaN(video2Time)) {
-          video2Ref.current.currentTime = video2Time
+        if (!isNaN(video2Time) && video2Ref.current.duration > 0) {
+          // Clamp to video duration
+          video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
           
           // Mark video 2 as complete when we reach 100% through
           if (video2Progress >= 1.0 && !video2Complete) {
             setVideo2Complete(true)
           }
           
-          // Reset completion if scrolling back
-          if (video2Progress < 0.8 && video2Complete) {
+          // Reset completion only if scrolling back to very beginning
+          if (video2Progress < 0.1 && video2Complete) {
             setVideo2Complete(false)
           }
         }
@@ -526,11 +528,12 @@ export default function Home() {
             <div 
               className="w-full max-w-4xl px-8 text-center"
               style={{
-                transform: windowHeight > 0 
-                  ? `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 200}%)` 
+                transform: windowHeight > 0 && verticalScrollPosition >= windowHeight
+                  ? `rotateX(45deg) translateZ(-200px) translateY(${Math.max(-100, 100 - ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 200)}%)` 
                   : 'rotateX(45deg) translateZ(-200px) translateY(100%)',
                 transformOrigin: "50% 100%",
-                transformStyle: "preserve-3d"
+                transformStyle: "preserve-3d",
+                transition: 'none'
               }}
             >
               <div className="space-y-16">
