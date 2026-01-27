@@ -215,65 +215,65 @@ export default function Home() {
 
     const handleVerticalScroll = () => {
       if (!verticalScrollRef.current || typeof window === 'undefined') return
-      const verticalScroll = verticalScrollRef.current.scrollTop
+      let verticalScroll = verticalScrollRef.current.scrollTop
       
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
       
-      // Video scrubbing logic
+      // Video scrubbing logic - Extended ranges for longer scroll
       const video1Start = currentWindowHeight
-      const video1End = currentWindowHeight * 2
-      const video2Start = currentWindowHeight * 2
-      const video2End = currentWindowHeight * 3
+      const video1End = currentWindowHeight * 2.5  // Extended range
+      const video2Start = currentWindowHeight * 2.5
+      const video2End = currentWindowHeight * 4    // Extended range
       
       // First video scrubbing
-      if (video1Ref.current && verticalScroll >= video1Start && verticalScroll <= video1End) {
-        const video1Progress = (verticalScroll - video1Start) / (video1End - video1Start)
+      if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
+        const video1Progress = Math.min(1, (verticalScroll - video1Start) / (video1End - video1Start))
         const video1Time = video1Progress * video1Ref.current.duration
         if (!isNaN(video1Time)) {
           video1Ref.current.currentTime = video1Time
           
-          // Mark video 1 as complete when we reach 95% through
-          if (video1Progress >= 0.95 && !video1Complete) {
+          // Mark video 1 as complete when we reach 98% through
+          if (video1Progress >= 0.98 && !video1Complete) {
             setVideo1Complete(true)
           }
           
           // Reset completion if scrolling back
-          if (video1Progress < 0.5 && video1Complete) {
+          if (video1Progress < 0.7 && video1Complete) {
             setVideo1Complete(false)
           }
         }
       }
       
-      // Prevent scrolling past first video until complete
-      if (verticalScroll > video1End - 50 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video1End - 50
-        return
+      // HARD LOCK: Prevent scrolling past first video until complete
+      if (verticalScroll >= video2Start - 10 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video2Start - 10
+        verticalScroll = video2Start - 10
       }
       
       // Second video scrubbing
-      if (video2Ref.current && verticalScroll >= video2Start && verticalScroll <= video2End) {
-        const video2Progress = (verticalScroll - video2Start) / (video2End - video2Start)
+      if (video2Ref.current && verticalScroll >= video2Start && verticalScroll < video2End) {
+        const video2Progress = Math.min(1, (verticalScroll - video2Start) / (video2End - video2Start))
         const video2Time = video2Progress * video2Ref.current.duration
         if (!isNaN(video2Time)) {
           video2Ref.current.currentTime = video2Time
           
-          // Mark video 2 as complete when we reach 95% through
-          if (video2Progress >= 0.95 && !video2Complete) {
+          // Mark video 2 as complete when we reach 98% through
+          if (video2Progress >= 0.98 && !video2Complete) {
             setVideo2Complete(true)
           }
           
           // Reset completion if scrolling back
-          if (video2Progress < 0.5 && video2Complete) {
+          if (video2Progress < 0.7 && video2Complete) {
             setVideo2Complete(false)
           }
         }
       }
       
-      // Prevent scrolling past second video until complete
-      if (verticalScroll > video2End - 50 && !video2Complete) {
-        verticalScrollRef.current.scrollTop = video2End - 50
-        return
+      // HARD LOCK: Prevent scrolling past second video until complete
+      if (verticalScroll >= video2End - 10 && !video2Complete) {
+        verticalScrollRef.current.scrollTop = video2End - 10
+        verticalScroll = video2End - 10
       }
       
       setVerticalScrollPosition(verticalScroll)
@@ -502,132 +502,136 @@ export default function Home() {
       </div>
 
       {/* First video page - Scroll-controlled with Star Wars text */}
-      <div className="relative h-screen w-full overflow-hidden">
-        {/* Scroll-controlled video background */}
-        <video
-          ref={video1Ref}
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source
-            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
-            type="video/mp4"
-          />
-        </video>
-        
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/40" />
-        
-        {/* Scroll progress indicator */}
-        {!video1Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
-            <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
-            <div className="w-32 h-1 bg-foreground/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-accent transition-all duration-300"
-                style={{ 
-                  width: `${Math.min(100, ((verticalScrollPosition - windowHeight) / windowHeight) * 100)}%` 
-                }}
-              />
-            </div>
-          </div>
-        )}
-        
-        {/* Star Wars style scrolling text */}
-        <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
-          <div 
-            className="w-full max-w-4xl px-8 text-center"
-            style={{
-              transform: windowHeight > 0 
-                ? `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - windowHeight) / windowHeight) * 200}%)` 
-                : 'rotateX(45deg) translateZ(-200px) translateY(100%)',
-              transformOrigin: "50% 100%",
-              transformStyle: "preserve-3d"
-            }}
+      <div className="relative w-full" style={{ height: '150vh' }}>
+        {/* Scroll-controlled video background - Sticky to viewport */}
+        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
+          <video
+            ref={video1Ref}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
           >
-            <div className="space-y-16">
-              <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
-                textShadow: "0 0 30px currentColor, 0 0 60px currentColor",
-                letterSpacing: "0.2em"
-              }}>
-                ZENITRAM
-              </h2>
-              
-              <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.9)" }}>
-                INTELLIGENT LIVING FEATURES
-              </div>
-              
-              {features.map((feature, index) => (
-                <div key={index} className="mb-24 opacity-90">
-                  <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
-                    textShadow: "0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)",
-                    letterSpacing: "0.1em"
-                  }}>
-                    {feature.title.toUpperCase()}
-                  </h3>
-                  <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ textShadow: "0 2px 15px rgba(0, 0, 0, 0.9)" }}>
-                    {feature.description}
-                  </p>
+            <source
+              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
+              type="video/mp4"
+            />
+          </video>
+          
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-black/40" />
+          
+          {/* Star Wars style scrolling text */}
+          <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
+            <div 
+              className="w-full max-w-4xl px-8 text-center"
+              style={{
+                transform: windowHeight > 0 
+                  ? `rotateX(45deg) translateZ(-200px) translateY(${100 - ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 200}%)` 
+                  : 'rotateX(45deg) translateZ(-200px) translateY(100%)',
+                transformOrigin: "50% 100%",
+                transformStyle: "preserve-3d"
+              }}
+            >
+              <div className="space-y-16">
+                <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
+                  textShadow: "0 0 30px currentColor, 0 0 60px currentColor",
+                  letterSpacing: "0.2em"
+                }}>
+                  ZENITRAM
+                </h2>
+                
+                <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.9)" }}>
+                  INTELLIGENT LIVING FEATURES
                 </div>
-              ))}
-              
-              <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
-                textShadow: "0 0 25px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)"
-              }}>
-                Experience the future of intelligent living
+                
+                {features.map((feature, index) => (
+                  <div key={index} className="mb-24 opacity-90">
+                    <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
+                      textShadow: "0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)",
+                      letterSpacing: "0.1em"
+                    }}>
+                      {feature.title.toUpperCase()}
+                    </h3>
+                    <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ textShadow: "0 2px 15px rgba(0, 0, 0, 0.9)" }}>
+                      {feature.description}
+                    </p>
+                  </div>
+                ))}
+                
+                <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
+                  textShadow: "0 0 25px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)"
+                }}>
+                  Experience the future of intelligent living
+                </div>
               </div>
             </div>
           </div>
+          
+          {/* Scroll progress indicator */}
+          {!video1Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight && (
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
+              <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
+              <div className="w-48 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-accent transition-all duration-300"
+                  style={{ 
+                    width: `${Math.min(100, ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 100)}%` 
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Second video page - Scroll-controlled */}
-      <div className="relative h-screen w-full overflow-hidden">
-        {/* Scroll-controlled video background */}
-        <video
-          ref={video2Ref}
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source
-            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/zenitram.mp4"
-            type="video/mp4"
-          />
-        </video>
-        
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30" />
-        
-        {/* Optional content */}
-        <div className="relative z-10 flex h-full w-full items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-6xl font-bold text-foreground mb-4" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.8)" }}>
-              Welcome Home
-            </h2>
-            <p className="text-xl text-foreground/80" style={{ textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)" }}>
-              The future of intelligent living
-            </p>
-          </div>
-        </div>
-        
-        {/* Scroll progress indicator */}
-        {!video2Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight * 2 && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
-            <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
-            <div className="w-32 h-1 bg-foreground/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-accent transition-all duration-300"
-                style={{ 
-                  width: `${Math.min(100, ((verticalScrollPosition - windowHeight * 2) / windowHeight) * 100)}%` 
-                }}
-              />
+      <div className="relative w-full" style={{ height: '150vh' }}>
+        {/* Scroll-controlled video background - Sticky to viewport */}
+        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
+          <video
+            ref={video2Ref}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source
+              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/zenitram.mp4"
+              type="video/mp4"
+            />
+          </video>
+          
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black/30" />
+          
+          {/* Optional content */}
+          <div className="relative z-10 flex h-full w-full items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-6xl font-bold text-foreground mb-4" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.8)" }}>
+                Welcome Home
+              </h2>
+              <p className="text-xl text-foreground/80" style={{ textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)" }}>
+                The future of intelligent living
+              </p>
             </div>
           </div>
-        )}
+          
+          {/* Scroll progress indicator */}
+          {!video2Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight * 2.5 && (
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
+              <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
+              <div className="w-48 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-accent transition-all duration-300"
+                  style={{ 
+                    width: `${Math.min(100, ((verticalScrollPosition - windowHeight * 2.5) / (windowHeight * 1.5)) * 100)}%` 
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <style jsx global>{`
