@@ -233,22 +233,22 @@ export default function Home() {
         if (!isNaN(video1Time)) {
           video1Ref.current.currentTime = video1Time
           
-          // Mark video 1 as complete when we reach 98% through
-          if (video1Progress >= 0.98 && !video1Complete) {
+          // Mark video 1 as complete when we reach 100% through
+          if (video1Progress >= 1.0 && !video1Complete) {
             setVideo1Complete(true)
           }
           
           // Reset completion if scrolling back
-          if (video1Progress < 0.7 && video1Complete) {
+          if (video1Progress < 0.8 && video1Complete) {
             setVideo1Complete(false)
           }
         }
       }
       
-      // HARD LOCK: Prevent scrolling past first video until complete
-      if (verticalScroll >= video2Start - 10 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video2Start - 10
-        verticalScroll = video2Start - 10
+      // HARD LOCK: Prevent scrolling past first video until 100% complete
+      if (verticalScroll >= video2Start - 5 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video2Start - 5
+        verticalScroll = video2Start - 5
       }
       
       // Second video scrubbing
@@ -258,22 +258,22 @@ export default function Home() {
         if (!isNaN(video2Time)) {
           video2Ref.current.currentTime = video2Time
           
-          // Mark video 2 as complete when we reach 98% through
-          if (video2Progress >= 0.98 && !video2Complete) {
+          // Mark video 2 as complete when we reach 100% through
+          if (video2Progress >= 1.0 && !video2Complete) {
             setVideo2Complete(true)
           }
           
           // Reset completion if scrolling back
-          if (video2Progress < 0.7 && video2Complete) {
+          if (video2Progress < 0.8 && video2Complete) {
             setVideo2Complete(false)
           }
         }
       }
       
-      // HARD LOCK: Prevent scrolling past second video until complete
-      if (verticalScroll >= video2End - 10 && !video2Complete) {
-        verticalScrollRef.current.scrollTop = video2End - 10
-        verticalScroll = video2End - 10
+      // HARD LOCK: Prevent scrolling past second video until 100% complete
+      if (verticalScroll >= video2End - 5 && !video2Complete) {
+        verticalScrollRef.current.scrollTop = video2End - 5
+        verticalScroll = video2End - 5
       }
       
       setVerticalScrollPosition(verticalScroll)
@@ -567,21 +567,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
-          {/* Scroll progress indicator */}
-          {!video1Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
-              <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
-              <div className="w-48 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-accent transition-all duration-300"
-                  style={{ 
-                    width: `${Math.min(100, ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 100)}%` 
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -616,21 +601,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-          
-          {/* Scroll progress indicator */}
-          {!video2Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight * 2.5 && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
-              <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
-              <div className="w-48 h-1.5 bg-foreground/20 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-accent transition-all duration-300"
-                  style={{ 
-                    width: `${Math.min(100, ((verticalScrollPosition - windowHeight * 2.5) / (windowHeight * 1.5)) * 100)}%` 
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
