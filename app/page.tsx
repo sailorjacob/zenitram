@@ -32,6 +32,8 @@ export default function Home() {
   const [isOnVideoPage, setIsOnVideoPage] = useState(false)
   const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
   const [windowHeight, setWindowHeight] = useState(0)
+  const [video1Complete, setVideo1Complete] = useState(false)
+  const [video2Complete, setVideo2Complete] = useState(false)
 
   const features = [
     {
@@ -214,7 +216,6 @@ export default function Home() {
     const handleVerticalScroll = () => {
       if (!verticalScrollRef.current || typeof window === 'undefined') return
       const verticalScroll = verticalScrollRef.current.scrollTop
-      setVerticalScrollPosition(verticalScroll)
       
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
@@ -231,7 +232,23 @@ export default function Home() {
         const video1Time = video1Progress * video1Ref.current.duration
         if (!isNaN(video1Time)) {
           video1Ref.current.currentTime = video1Time
+          
+          // Mark video 1 as complete when we reach 95% through
+          if (video1Progress >= 0.95 && !video1Complete) {
+            setVideo1Complete(true)
+          }
+          
+          // Reset completion if scrolling back
+          if (video1Progress < 0.5 && video1Complete) {
+            setVideo1Complete(false)
+          }
         }
+      }
+      
+      // Prevent scrolling past first video until complete
+      if (verticalScroll > video1End - 50 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video1End - 50
+        return
       }
       
       // Second video scrubbing
@@ -240,8 +257,26 @@ export default function Home() {
         const video2Time = video2Progress * video2Ref.current.duration
         if (!isNaN(video2Time)) {
           video2Ref.current.currentTime = video2Time
+          
+          // Mark video 2 as complete when we reach 95% through
+          if (video2Progress >= 0.95 && !video2Complete) {
+            setVideo2Complete(true)
+          }
+          
+          // Reset completion if scrolling back
+          if (video2Progress < 0.5 && video2Complete) {
+            setVideo2Complete(false)
+          }
         }
       }
+      
+      // Prevent scrolling past second video until complete
+      if (verticalScroll > video2End - 50 && !video2Complete) {
+        verticalScrollRef.current.scrollTop = video2End - 50
+        return
+      }
+      
+      setVerticalScrollPosition(verticalScroll)
     }
 
     const container = scrollContainerRef.current
@@ -485,6 +520,21 @@ export default function Home() {
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40" />
         
+        {/* Scroll progress indicator */}
+        {!video1Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
+            <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
+            <div className="w-32 h-1 bg-foreground/20 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-accent transition-all duration-300"
+                style={{ 
+                  width: `${Math.min(100, ((verticalScrollPosition - windowHeight) / windowHeight) * 100)}%` 
+                }}
+              />
+            </div>
+          </div>
+        )}
+        
         {/* Star Wars style scrolling text */}
         <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
           <div 
@@ -563,6 +613,21 @@ export default function Home() {
             </p>
           </div>
         </div>
+        
+        {/* Scroll progress indicator */}
+        {!video2Complete && windowHeight > 0 && verticalScrollPosition >= windowHeight * 2 && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center">
+            <div className="text-foreground/60 text-sm mb-2 font-mono">Keep scrolling...</div>
+            <div className="w-32 h-1 bg-foreground/20 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-accent transition-all duration-300"
+                style={{ 
+                  width: `${Math.min(100, ((verticalScrollPosition - windowHeight * 2) / windowHeight) * 100)}%` 
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <style jsx global>{`
