@@ -358,9 +358,23 @@ export default function Home() {
       {/* First page - horizontal slides */}
       <div className="relative h-screen w-full">
         {/* Dream video background with circular portal effect */}
-        <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
+        <div 
+          className="transition-opacity duration-700"
+          style={{ 
+            opacity: isOnVideoPage ? 0 : 1,
+            visibility: isOnVideoPage ? 'hidden' : 'visible'
+          }}
+        >
+          <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
+        </div>
         
-        <div className="fixed inset-0 z-[1] pointer-events-none" style={{ top: isOnVideoPage ? '-100vh' : '0' }}>
+        <div 
+          className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-700" 
+          style={{ 
+            opacity: isOnVideoPage ? 0 : 1,
+            visibility: isOnVideoPage ? 'hidden' : 'visible'
+          }}
+        >
           <div
             className="absolute inset-0"
             style={{
@@ -562,7 +576,7 @@ export default function Home() {
             muted
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover z-0"
           >
             <source
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
@@ -573,7 +587,7 @@ export default function Home() {
           {/* Removed dark overlay for better video visibility */}
           
           {/* Star Wars style scrolling text */}
-          <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
+          <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none z-20" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
             <div 
               className="w-full max-w-4xl px-8 text-center"
               style={{
@@ -587,32 +601,36 @@ export default function Home() {
             >
               <div className="space-y-16">
                 <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
-                  textShadow: "0 0 30px currentColor, 0 0 60px currentColor",
+                  textShadow: "0 0 40px currentColor, 0 0 80px currentColor, 0 8px 40px rgba(0, 0, 0, 1)",
                   letterSpacing: "0.2em"
                 }}>
                   ZENITRAM
                 </h2>
                 
-                <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.9)" }}>
+                <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ 
+                  textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)" 
+                }}>
                   INTELLIGENT LIVING FEATURES
                 </div>
                 
                 {features.map((feature, index) => (
                   <div key={index} className="mb-24 opacity-90">
                     <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
-                      textShadow: "0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)",
+                      textShadow: "0 0 30px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)",
                       letterSpacing: "0.1em"
                     }}>
                       {feature.title.toUpperCase()}
                     </h3>
-                    <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ textShadow: "0 2px 15px rgba(0, 0, 0, 0.9)" }}>
+                    <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ 
+                      textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)" 
+                    }}>
                       {feature.description}
                     </p>
                   </div>
                 ))}
                 
                 <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
-                  textShadow: "0 0 25px currentColor, 0 4px 20px rgba(0, 0, 0, 0.9)"
+                  textShadow: "0 0 35px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)"
                 }}>
                   Experience the future of intelligent living
                 </div>
@@ -631,7 +649,7 @@ export default function Home() {
             muted
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover z-0"
           >
             <source
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/zenitram.mp4"
@@ -642,12 +660,16 @@ export default function Home() {
           {/* Removed dark overlay for better video visibility */}
           
           {/* Optional content */}
-          <div className="relative z-10 flex h-full w-full items-center justify-center">
+          <div className="relative z-20 flex h-full w-full items-center justify-center">
             <div className="text-center">
-              <h2 className="text-6xl font-bold text-foreground mb-4" style={{ textShadow: "0 4px 20px rgba(0, 0, 0, 0.8)" }}>
+              <h2 className="text-6xl font-bold text-foreground mb-4" style={{ 
+                textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)" 
+              }}>
                 Welcome Home
               </h2>
-              <p className="text-xl text-foreground/80" style={{ textShadow: "0 2px 10px rgba(0, 0, 0, 0.8)" }}>
+              <p className="text-xl text-foreground/90" style={{ 
+                textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)" 
+              }}>
                 The future of intelligent living
               </p>
             </div>
