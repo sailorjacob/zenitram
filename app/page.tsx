@@ -233,11 +233,21 @@ export default function Home() {
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
       
-      // Video scrubbing logic - Extended ranges for longer scroll
+      // Video scrubbing logic - Match actual container heights (150vh each)
       const video1Start = currentWindowHeight
-      const video1End = currentWindowHeight * 2.5  // Extended range
+      const video1End = currentWindowHeight * 2.5  // 1.5 screen heights for video 1
       const video2Start = currentWindowHeight * 2.5
-      const video2End = currentWindowHeight * 4    // Extended range
+      const video2End = currentWindowHeight * 4    // 1.5 screen heights for video 2
+      
+      // Show video 2 text when entering video 2 section
+      if (verticalScroll >= video2Start && !video2TextVisible) {
+        setVideo2TextVisible(true)
+      }
+      
+      // Reset text if scrolling back before video 2
+      if (verticalScroll < video2Start && video2TextVisible) {
+        setVideo2TextVisible(false)
+      }
       
       // First video scrubbing
       if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
@@ -265,33 +275,15 @@ export default function Home() {
         verticalScroll = video2Start - 5
       }
       
-      // Second video scrubbing
-      if (video2Ref.current && verticalScroll >= video2Start && verticalScroll < video2End) {
+      // Second video scrubbing - NO LOCK, free scrolling to footer
+      if (video2Ref.current && verticalScroll >= video2Start) {
         const video2Progress = Math.min(1, Math.max(0, (verticalScroll - video2Start) / (video2End - video2Start)))
         const video2Time = video2Progress * video2Ref.current.duration
         if (!isNaN(video2Time) && video2Ref.current.duration > 0) {
           // Clamp to video duration
           video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
-          
-          // Show text when video 2 starts playing (after 20% scroll)
-          if (video2Progress >= 0.2 && !video2TextVisible) {
-            setVideo2TextVisible(true)
-          }
-          
-          // Mark video 2 as complete when we reach 100% through
-          if (video2Progress >= 1.0 && !video2Complete) {
-            setVideo2Complete(true)
-          }
-          
-          // Reset completion only if scrolling back to very beginning
-          if (video2Progress < 0.1 && video2Complete) {
-            setVideo2Complete(false)
-            setVideo2TextVisible(false)
-          }
         }
       }
-      
-      // Allow scrolling past second video to footer page (no lock)
       
       setVerticalScrollPosition(verticalScroll)
     }
@@ -345,7 +337,7 @@ export default function Home() {
         verticalContainer.removeEventListener("touchmove", handleTouchMove)
       }
     }
-  }, [currentSection, updateScrollProgress])
+  }, [currentSection, updateScrollProgress, video1Complete, video2TextVisible])
 
   return (
     <main 
