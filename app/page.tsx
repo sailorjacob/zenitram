@@ -239,16 +239,6 @@ export default function Home() {
       const video2Start = currentWindowHeight * 2.5
       const video2End = currentWindowHeight * 4    // 1.5 screen heights for video 2
       
-      // Show video 2 text when entering video 2 section
-      if (verticalScroll >= video2Start && !video2TextVisible) {
-        setVideo2TextVisible(true)
-      }
-      
-      // Reset text if scrolling back before video 2
-      if (verticalScroll < video2Start && video2TextVisible) {
-        setVideo2TextVisible(false)
-      }
-      
       // First video scrubbing
       if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
         const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
@@ -257,8 +247,8 @@ export default function Home() {
           // Clamp to video duration
           video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
           
-          // Mark video 1 as complete when we reach 100% through
-          if (video1Progress >= 1.0 && !video1Complete) {
+          // Mark video 1 as complete when we reach 95% through (more forgiving)
+          if (video1Progress >= 0.95 && !video1Complete) {
             setVideo1Complete(true)
           }
           
@@ -269,10 +259,11 @@ export default function Home() {
         }
       }
       
-      // HARD LOCK: Prevent scrolling past first video until 100% complete
-      if (verticalScroll >= video2Start - 5 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video2Start - 5
-        verticalScroll = video2Start - 5
+      // HARD LOCK: Prevent scrolling past first video until 95% complete
+      if (verticalScroll >= video2Start - 50 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video2Start - 50
+        verticalScroll = video2Start - 50
+        return
       }
       
       // Second video scrubbing - NO LOCK, free scrolling to footer
@@ -283,6 +274,14 @@ export default function Home() {
           // Clamp to video duration
           video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
         }
+        
+        // Show text when entering video 2 section
+        if (!video2TextVisible) {
+          setVideo2TextVisible(true)
+        }
+      } else if (verticalScroll < video2Start && video2TextVisible) {
+        // Hide text when scrolling back before video 2
+        setVideo2TextVisible(false)
       }
       
       setVerticalScrollPosition(verticalScroll)
@@ -659,14 +658,10 @@ export default function Home() {
             <div className={`text-center transition-all duration-1500 ${
               video2TextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <h2 className="text-6xl md:text-7xl font-bold text-foreground mb-6" style={{ 
-                textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)"
-              }}>
+              <h2 className="text-6xl md:text-7xl font-bold text-foreground mb-6">
                 <AnimatedText text="Welcome Home" variant="wave" />
               </h2>
-              <p className="text-2xl md:text-3xl text-foreground/90" style={{ 
-                textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)"
-              }}>
+              <p className="text-2xl md:text-3xl text-foreground/90">
                 <AnimatedText text="The future of intelligent living" variant="dissolve" />
               </p>
             </div>
