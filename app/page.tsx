@@ -662,14 +662,10 @@ export default function Home() {
           {/* Optional content */}
           <div className="relative z-20 flex h-full w-full items-center justify-center">
             <div className="text-center">
-              <h2 className="text-6xl font-bold text-foreground mb-4" style={{ 
-                textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)" 
-              }}>
+              <h2 className="text-6xl font-bold text-foreground mb-4">
                 Welcome Home
               </h2>
-              <p className="text-xl text-foreground/90" style={{ 
-                textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)" 
-              }}>
+              <p className="text-xl text-foreground/90">
                 The future of intelligent living
               </p>
             </div>
