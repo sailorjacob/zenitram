@@ -56,28 +56,31 @@ export function FeaturesSection() {
         </p>
       </div>
 
-      <div className="grid gap-6 sm:gap-8 md:grid-cols-3 md:gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 items-start gap-4 sm:gap-6 md:grid-cols-3 md:gap-10 lg:gap-12">
         {features.map((feature, i) => (
           <div
             key={i}
-            className={`group transition-all duration-700 ${
+            className={`group flex min-h-0 transition-all duration-700 ${
               isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
             }`}
             style={{
               transitionDelay: `${i * 100}ms`,
             }}
           >
-            <div className="mb-4 flex items-start gap-3">
-              <div className="mt-2 h-2 w-2 rounded-full bg-accent flex-shrink-0" />
+            {/* Bullet inline with title on mobile; stacked on larger screens for cleaner look */}
+            <div className="flex flex-shrink-0 items-start gap-3 md:flex-col md:gap-0">
+              <div className="mt-1.5 h-2 w-2 rounded-full bg-accent flex-shrink-0 md:mb-3 md:mt-2" aria-hidden />
             </div>
-            <h3 className="mb-2 sm:mb-3 font-sans text-lg sm:text-xl font-light text-foreground md:text-2xl">
-              <span className="block">
-                <AnimatedText text={feature.title} variant="cut" />
-              </span>
-            </h3>
-            <p className="text-xs sm:text-sm leading-relaxed text-foreground/70 md:text-base">
-              <AnimatedText text={feature.description} variant="dissolve" />
-            </p>
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-1.5 font-sans text-base font-light text-foreground sm:mb-2 sm:text-lg md:mb-3 md:text-xl lg:text-2xl">
+                <span className="block">
+                  <AnimatedText text={feature.title} variant="cut" />
+                </span>
+              </h3>
+              <p className="text-xs leading-relaxed text-foreground/70 sm:text-sm md:text-base">
+                <AnimatedText text={feature.description} variant="dissolve" />
+              </p>
+            </div>
           </div>
         ))}
       </div>
