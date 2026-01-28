@@ -26,7 +26,7 @@ export default function Home() {
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("sapphire")
+  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("silver")
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false)
   const themeDropdownRef = useRef<HTMLDivElement>(null)
   const [isOnVideoPage, setIsOnVideoPage] = useState(false)
