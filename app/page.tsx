@@ -34,6 +34,7 @@ export default function Home() {
   const [windowHeight, setWindowHeight] = useState(0)
   const [video1Complete, setVideo1Complete] = useState(false)
   const [video2Complete, setVideo2Complete] = useState(false)
+  const [video2TextVisible, setVideo2TextVisible] = useState(false)
 
   const features = [
     {
@@ -272,6 +273,11 @@ export default function Home() {
           // Clamp to video duration
           video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
           
+          // Show text when video 2 starts playing (after 20% scroll)
+          if (video2Progress >= 0.2 && !video2TextVisible) {
+            setVideo2TextVisible(true)
+          }
+          
           // Mark video 2 as complete when we reach 100% through
           if (video2Progress >= 1.0 && !video2Complete) {
             setVideo2Complete(true)
@@ -280,15 +286,12 @@ export default function Home() {
           // Reset completion only if scrolling back to very beginning
           if (video2Progress < 0.1 && video2Complete) {
             setVideo2Complete(false)
+            setVideo2TextVisible(false)
           }
         }
       }
       
-      // HARD LOCK: Prevent scrolling past second video until 100% complete
-      if (verticalScroll >= video2End - 5 && !video2Complete) {
-        verticalScrollRef.current.scrollTop = video2End - 5
-        verticalScroll = video2End - 5
-      }
+      // Allow scrolling past second video to footer page (no lock)
       
       setVerticalScrollPosition(verticalScroll)
     }
@@ -659,15 +662,110 @@ export default function Home() {
           
           {/* Removed dark overlay for better video visibility */}
           
-          {/* Optional content */}
+          {/* Animated content */}
           <div className="relative z-20 flex h-full w-full items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-6xl font-bold text-foreground mb-4">
-                Welcome Home
+            <div className={`text-center transition-all duration-1500 ${
+              video2TextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              <h2 className="text-6xl md:text-7xl font-bold text-foreground mb-6" style={{ 
+                textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)"
+              }}>
+                <AnimatedText text="Welcome Home" variant="wave" />
               </h2>
-              <p className="text-xl text-foreground/90">
-                The future of intelligent living
+              <p className="text-2xl md:text-3xl text-foreground/90" style={{ 
+                textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)"
+              }}>
+                <AnimatedText text="The future of intelligent living" variant="dissolve" />
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Final page - Company Info & Footer */}
+      <div className="relative w-full min-h-screen bg-gradient-to-b from-zinc-50 via-zinc-100 to-zinc-200">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+          {/* Company Info Section */}
+          <div className="text-center mb-20">
+            <div className="mb-8">
+              <img
+                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
+                alt="Zenitram Logo"
+                className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain opacity-90"
+              />
+            </div>
+            <h2 className="text-5xl md:text-6xl font-light text-zinc-800 mb-6 tracking-tight">
+              <AnimatedText text="Zenitram" variant="wave" />
+            </h2>
+            <p className="text-xl md:text-2xl text-zinc-600 font-light max-w-3xl mx-auto mb-16">
+              <AnimatedText text="Transforming houses into intelligent homes through cutting-edge automation technology." variant="dissolve" />
+            </p>
+          </div>
+
+          {/* Info Grid */}
+          <div className="grid md:grid-cols-3 gap-12 mb-20">
+            <div className="text-center">
+              <h3 className="text-2xl font-light text-zinc-800 mb-4">
+                <AnimatedText text="Vision" variant="cut" />
+              </h3>
+              <p className="text-zinc-600 leading-relaxed">
+                Creating seamless living experiences where technology anticipates your needs and adapts to your lifestyle.
+              </p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-2xl font-light text-zinc-800 mb-4">
+                <AnimatedText text="Innovation" variant="cut" />
+              </h3>
+              <p className="text-zinc-600 leading-relaxed">
+                Pioneering smart home solutions that combine elegance with intelligence for modern living spaces.
+              </p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-2xl font-light text-zinc-800 mb-4">
+                <AnimatedText text="Excellence" variant="cut" />
+              </h3>
+              <p className="text-zinc-600 leading-relaxed">
+                Delivering premium automation systems designed for reliability, security, and unparalleled user experience.
+              </p>
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-light text-zinc-800 mb-8">
+              <AnimatedText text="Get in Touch" variant="wave" />
+            </h3>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-zinc-600">
+              <a href="mailto:info@zenitram.com" className="hover:text-accent transition-colors">
+                info@zenitram.com
+              </a>
+              <span className="hidden md:inline text-zinc-400">|</span>
+              <a href="tel:+1234567890" className="hover:text-accent transition-colors">
+                +1 (234) 567-890
+              </a>
+              <span className="hidden md:inline text-zinc-400">|</span>
+              <span>San Francisco, CA</span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-zinc-300 pt-12">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
+              <div className="flex gap-8">
+                <button onClick={() => scrollToSection(0)} className="hover:text-accent transition-colors">
+                  Home
+                </button>
+                <button onClick={() => scrollToSection(1)} className="hover:text-accent transition-colors">
+                  Features
+                </button>
+                <button onClick={() => scrollToSection(5)} className="hover:text-accent transition-colors">
+                  Contact
+                </button>
+              </div>
+              <div className="text-center md:text-right">
+                <p className="font-mono">© 2026 Zenitram. All rights reserved.</p>
+                <p className="text-xs mt-1">Intelligent Living for Modern Homes</p>
+              </div>
             </div>
           </div>
         </div>
