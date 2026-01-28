@@ -541,7 +541,7 @@ export default function Home() {
         </section>
 
         {/* Features Section - scrollable on mobile so all bullets/content are readable */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-start justify-center overflow-y-auto overflow-x-hidden px-4 pt-24 pb-12 sm:px-6 md:items-center md:overflow-visible md:pb-0 md:pt-0 lg:px-16">
+        <section className="relative flex h-screen w-screen shrink-0 snap-start items-start justify-center overflow-y-auto overflow-x-hidden px-4 pt-24 pb-24 sm:px-6 sm:pb-28 md:items-center md:overflow-visible md:pb-0 md:pt-0 lg:px-16">
           <FeaturesSection />
         </section>
 

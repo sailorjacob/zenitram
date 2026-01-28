@@ -56,23 +56,28 @@ export function FeaturesSection() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-4 sm:gap-6 md:grid-cols-3 md:gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 md:grid-cols-3 md:gap-10 lg:gap-12">
         {features.map((feature, i) => (
           <div
             key={i}
-            className={`group flex min-h-0 transition-all duration-700 ${
+            className={`group grid min-h-0 gap-x-3 gap-y-1.5 transition-all duration-700 md:flex md:flex-col md:gap-x-0 md:gap-y-2 ${
               isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
             }`}
             style={{
+              gridTemplateColumns: "auto 1fr",
               transitionDelay: `${i * 100}ms`,
             }}
           >
-            {/* Bullet inline with title on mobile; stacked on larger screens for cleaner look */}
-            <div className="flex flex-shrink-0 items-start gap-3 md:flex-col md:gap-0">
-              <div className="mt-1.5 h-2 w-2 rounded-full bg-accent flex-shrink-0 md:mb-3 md:mt-2" aria-hidden />
+            {/* Bullet aligned to first line of title (same row on mobile, above on desktop) */}
+            <div
+              className="flex flex-shrink-0 items-center pt-[0.3em] md:block md:pt-0"
+              style={{ gridRow: "1 / 2" }}
+              aria-hidden
+            >
+              <div className="h-2 w-2 rounded-full bg-accent md:mb-3" />
             </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-1.5 font-sans text-base font-light text-foreground sm:mb-2 sm:text-lg md:mb-3 md:text-xl lg:text-2xl">
+            <div className="min-w-0" style={{ gridRow: "1 / 3", gridColumn: "2 / 3" }}>
+              <h3 className="mb-1.5 font-sans text-base font-light leading-tight text-foreground sm:mb-2 sm:text-lg md:mb-3 md:text-xl lg:text-2xl">
                 <span className="block">
                   <AnimatedText text={feature.title} variant="cut" />
                 </span>
