@@ -214,8 +214,20 @@ export default function Home() {
     }
 
     const handleVerticalScroll = () => {
-      if (!verticalScrollRef.current || typeof window === 'undefined') return
+      if (!verticalScrollRef.current || !scrollContainerRef.current || typeof window === 'undefined') return
       let verticalScroll = verticalScrollRef.current.scrollTop
+      
+      // Check if we're at the last horizontal section
+      const sectionWidth = scrollContainerRef.current.offsetWidth
+      const scrollLeft = scrollContainerRef.current.scrollLeft
+      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+      const isAtEnd = scrollLeft >= maxScroll - 50 // More lenient threshold for mobile
+      
+      // CRITICAL: Prevent vertical scrolling if not at the last horizontal section
+      if (!isAtEnd && verticalScroll > 0) {
+        verticalScrollRef.current.scrollTop = 0
+        return
+      }
       
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
@@ -284,10 +296,41 @@ export default function Home() {
     const container = scrollContainerRef.current
     const verticalContainer = verticalScrollRef.current
     
+    // Touch handling for mobile
+    let touchStartY = 0
+    let touchStartX = 0
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY
+      touchStartX = e.touches[0].clientX
+    }
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!scrollContainerRef.current || !verticalScrollRef.current) return
+      
+      const touchY = e.touches[0].clientY
+      const touchX = e.touches[0].clientX
+      const deltaY = touchStartY - touchY
+      const deltaX = touchStartX - touchX
+      
+      const sectionWidth = scrollContainerRef.current.offsetWidth
+      const scrollLeft = scrollContainerRef.current.scrollLeft
+      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+      const isAtEnd = scrollLeft >= maxScroll - 50
+      const verticalScroll = verticalScrollRef.current.scrollTop
+      
+      // If trying to scroll down vertically but not at the end, prevent it
+      if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0 && !isAtEnd && verticalScroll === 0) {
+        e.preventDefault()
+      }
+    }
+    
     if (container && verticalContainer) {
       verticalContainer.addEventListener("wheel", handleWheel, { passive: false })
       container.addEventListener("scroll", handleScroll, { passive: true })
       verticalContainer.addEventListener("scroll", handleVerticalScroll, { passive: true })
+      verticalContainer.addEventListener("touchstart", handleTouchStart, { passive: true })
+      verticalContainer.addEventListener("touchmove", handleTouchMove, { passive: false })
     }
 
     return () => {
@@ -295,6 +338,8 @@ export default function Home() {
         verticalContainer.removeEventListener("wheel", handleWheel)
         container.removeEventListener("scroll", handleScroll)
         verticalContainer.removeEventListener("scroll", handleVerticalScroll)
+        verticalContainer.removeEventListener("touchstart", handleTouchStart)
+        verticalContainer.removeEventListener("touchmove", handleTouchMove)
       }
     }
   }, [currentSection, updateScrollProgress])
@@ -303,7 +348,12 @@ export default function Home() {
     <main 
       ref={verticalScrollRef}
       className="relative h-screen w-full overflow-y-auto overflow-x-hidden bg-black"
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      style={{ 
+        scrollbarWidth: "none", 
+        msOverflowStyle: "none",
+        WebkitOverflowScrolling: "touch",
+        overscrollBehavior: "none"
+      }}
     >
       {/* First page - horizontal slides */}
       <div className="relative h-screen w-full">
@@ -520,8 +570,7 @@ export default function Home() {
             />
           </video>
           
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-black/40" />
+          {/* Removed dark overlay for better video visibility */}
           
           {/* Star Wars style scrolling text */}
           <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
@@ -590,8 +639,7 @@ export default function Home() {
             />
           </video>
           
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/30" />
+          {/* Removed dark overlay for better video visibility */}
           
           {/* Optional content */}
           <div className="relative z-10 flex h-full w-full items-center justify-center">
