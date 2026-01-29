@@ -22,7 +22,6 @@ export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const verticalScrollRef = useRef<HTMLDivElement>(null)
   const video1Ref = useRef<HTMLVideoElement>(null)
-  const video2Ref = useRef<HTMLVideoElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -33,8 +32,6 @@ export default function Home() {
   const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
   const [windowHeight, setWindowHeight] = useState(0)
   const [video1Complete, setVideo1Complete] = useState(false)
-  const [video2Complete, setVideo2Complete] = useState(false)
-  const [video2TextVisible, setVideo2TextVisible] = useState(false)
 
   const features = [
     {
@@ -81,9 +78,6 @@ export default function Home() {
     // Preload video metadata for scrubbing
     if (video1Ref.current) {
       video1Ref.current.load()
-    }
-    if (video2Ref.current) {
-      video2Ref.current.load()
     }
   }, [])
 
@@ -151,7 +145,7 @@ export default function Home() {
       const isVideoPageVisible = verticalScroll > currentWindowHeight * 0.3
       
       // Video lock boundaries
-      const video2Start = currentWindowHeight * 2.5
+      const video1End = currentWindowHeight * 2.5
 
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         // If at the last section and scrolling down, allow vertical scroll to video page
@@ -174,9 +168,9 @@ export default function Home() {
           
           // Check video 1 lock
           const newScrollTop = verticalScroll + e.deltaY
-          if (newScrollTop >= video2Start - 50 && !video1Complete) {
+          if (newScrollTop >= video1End - 50 && !video1Complete) {
             // Lock at video 1 boundary
-            verticalScrollRef.current.scrollTop = video2Start - 50
+            verticalScrollRef.current.scrollTop = video1End - 50
             return
           }
           
@@ -260,23 +254,21 @@ export default function Home() {
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
       
-      // Video scrubbing logic
+      // Video scrubbing logic - only one video now
       const video1Start = currentWindowHeight
       const video1End = currentWindowHeight * 2.5
-      const video2Start = currentWindowHeight * 2.5
-      const video2End = currentWindowHeight * 4
       
       // ENFORCE LOCK: If scrolled past boundary without completing video 1, snap back
-      if (verticalScroll >= video2Start - 50 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video2Start - 50
-        verticalScroll = video2Start - 50
+      if (verticalScroll >= video1End - 50 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video1End - 50
+        verticalScroll = video1End - 50
         // Don't process further
         setVerticalScrollPosition(verticalScroll)
         return
       }
       
-      // First video scrubbing
-      if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
+      // First (and only) video scrubbing - free scrolling after completion
+      if (video1Ref.current && verticalScroll >= video1Start) {
         const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
         const video1Time = video1Progress * video1Ref.current.duration
         if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
@@ -292,22 +284,6 @@ export default function Home() {
             setVideo1Complete(false)
           }
         }
-      }
-      
-      // Second video scrubbing - free scrolling
-      if (video2Ref.current && verticalScroll >= video2Start) {
-        const video2Progress = Math.min(1, Math.max(0, (verticalScroll - video2Start) / (video2End - video2Start)))
-        const video2Time = video2Progress * video2Ref.current.duration
-        if (!isNaN(video2Time) && video2Ref.current.duration > 0) {
-          video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
-        }
-        
-        // Show text
-        if (!video2TextVisible) {
-          setVideo2TextVisible(true)
-        }
-      } else if (verticalScroll < video2Start && video2TextVisible) {
-        setVideo2TextVisible(false)
       }
       
       setVerticalScrollPosition(verticalScroll)
@@ -362,7 +338,7 @@ export default function Home() {
         verticalContainer.removeEventListener("touchmove", handleTouchMove)
       }
     }
-  }, [currentSection, updateScrollProgress, video1Complete, video2TextVisible])
+  }, [currentSection, updateScrollProgress, video1Complete])
 
   return (
     <main 
@@ -656,41 +632,6 @@ export default function Home() {
                   Experience the future of intelligent living
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Second video page - Scroll-controlled */}
-      <div className="relative w-full" style={{ height: '150vh' }}>
-        {/* Scroll-controlled video background - Sticky to viewport */}
-        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
-          <video
-            ref={video2Ref}
-            muted
-            playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover z-0"
-          >
-            <source
-              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/zenitram.mp4"
-              type="video/mp4"
-            />
-          </video>
-          
-          {/* Removed dark overlay for better video visibility */}
-          
-          {/* Animated content */}
-          <div className="relative z-20 flex h-full w-full items-center justify-center">
-            <div className={`text-center transition-all duration-1500 ${
-              video2TextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
-              <h2 className="text-6xl md:text-7xl font-bold text-foreground mb-6">
-                <AnimatedText text="Welcome Home" variant="wave" />
-              </h2>
-              <p className="text-2xl md:text-3xl text-foreground/90">
-                <AnimatedText text="The future of intelligent living" variant="dissolve" />
-              </p>
             </div>
           </div>
         </div>
