@@ -142,41 +142,68 @@ export default function Home() {
       const sectionWidth = scrollContainerRef.current.offsetWidth
       const scrollLeft = scrollContainerRef.current.scrollLeft
       const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 10 // Small threshold for rounding errors
+      const isAtEnd = scrollLeft >= maxScroll - 10
       const isAtStart = scrollLeft <= 10
       
       // Check if we're on the video page
       const verticalScroll = verticalScrollRef.current.scrollTop
       const currentWindowHeight = window.innerHeight
       const isVideoPageVisible = verticalScroll > currentWindowHeight * 0.3
+      
+      // Video lock boundaries
+      const video2Start = currentWindowHeight * 2.5
 
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         // If at the last section and scrolling down, allow vertical scroll to video page
         if (isAtEnd && e.deltaY > 0 && !isVideoPageVisible) {
           e.preventDefault()
+          
+          // Limit scroll speed to prevent jumping
+          const scrollAmount = Math.min(Math.abs(e.deltaY), 100)
           verticalScrollRef.current.scrollBy({
-            top: e.deltaY,
+            top: scrollAmount,
             behavior: "instant",
           })
-          setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.5)
+          setIsOnVideoPage(verticalScrollRef.current.scrollTop > currentWindowHeight * 0.5)
           return
         }
         
-        // If on video page and scrolling up, go back to horizontal sections
-        if (verticalScroll > 0 && e.deltaY < 0) {
+        // If on video page, control vertical scrolling with lock check
+        if (verticalScroll > 0 && isAtEnd) {
           e.preventDefault()
-          if (verticalScroll - Math.abs(e.deltaY) <= 0) {
-            verticalScrollRef.current.scrollTo({
-              top: 0,
-              behavior: "instant",
-            })
-            setIsOnVideoPage(false)
+          
+          // Check video 1 lock
+          const newScrollTop = verticalScroll + e.deltaY
+          if (newScrollTop >= video2Start - 50 && !video1Complete) {
+            // Lock at video 1 boundary
+            verticalScrollRef.current.scrollTop = video2Start - 50
+            return
+          }
+          
+          // If scrolling up, go back to horizontal sections
+          if (e.deltaY < 0) {
+            if (verticalScroll - Math.abs(e.deltaY) <= 0) {
+              verticalScrollRef.current.scrollTo({
+                top: 0,
+                behavior: "instant",
+              })
+              setIsOnVideoPage(false)
+            } else {
+              // Limit scroll speed
+              const scrollAmount = Math.max(e.deltaY, -100)
+              verticalScrollRef.current.scrollBy({
+                top: scrollAmount,
+                behavior: "instant",
+              })
+              setIsOnVideoPage(verticalScrollRef.current.scrollTop > currentWindowHeight * 0.5)
+            }
           } else {
+            // Scrolling down - limit speed
+            const scrollAmount = Math.min(e.deltaY, 100)
             verticalScrollRef.current.scrollBy({
-              top: e.deltaY,
+              top: scrollAmount,
               behavior: "instant",
             })
-            setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.5)
           }
           return
         }
@@ -222,7 +249,7 @@ export default function Home() {
       const sectionWidth = scrollContainerRef.current.offsetWidth
       const scrollLeft = scrollContainerRef.current.scrollLeft
       const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 50 // More lenient threshold for mobile
+      const isAtEnd = scrollLeft >= maxScroll - 50
       
       // CRITICAL: Prevent vertical scrolling if not at the last horizontal section
       if (!isAtEnd && verticalScroll > 0) {
@@ -233,54 +260,53 @@ export default function Home() {
       const currentWindowHeight = window.innerHeight
       setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
       
-      // Video scrubbing logic - Match actual container heights (150vh each)
+      // Video scrubbing logic
       const video1Start = currentWindowHeight
-      const video1End = currentWindowHeight * 2.5  // 1.5 screen heights for video 1
+      const video1End = currentWindowHeight * 2.5
       const video2Start = currentWindowHeight * 2.5
-      const video2End = currentWindowHeight * 4    // 1.5 screen heights for video 2
+      const video2End = currentWindowHeight * 4
+      
+      // ENFORCE LOCK: If scrolled past boundary without completing video 1, snap back
+      if (verticalScroll >= video2Start - 50 && !video1Complete) {
+        verticalScrollRef.current.scrollTop = video2Start - 50
+        verticalScroll = video2Start - 50
+        // Don't process further
+        setVerticalScrollPosition(verticalScroll)
+        return
+      }
       
       // First video scrubbing
       if (video1Ref.current && verticalScroll >= video1Start && verticalScroll < video2Start) {
         const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
         const video1Time = video1Progress * video1Ref.current.duration
         if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
-          // Clamp to video duration
           video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
           
-          // Mark video 1 as complete when we reach 95% through (more forgiving)
+          // Mark complete at 95%
           if (video1Progress >= 0.95 && !video1Complete) {
             setVideo1Complete(true)
           }
           
-          // Reset completion only if scrolling back to very beginning
+          // Reset if scrolling back
           if (video1Progress < 0.1 && video1Complete) {
             setVideo1Complete(false)
           }
         }
       }
       
-      // HARD LOCK: Prevent scrolling past first video until 95% complete
-      if (verticalScroll >= video2Start - 50 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video2Start - 50
-        verticalScroll = video2Start - 50
-        return
-      }
-      
-      // Second video scrubbing - NO LOCK, free scrolling to footer
+      // Second video scrubbing - free scrolling
       if (video2Ref.current && verticalScroll >= video2Start) {
         const video2Progress = Math.min(1, Math.max(0, (verticalScroll - video2Start) / (video2End - video2Start)))
         const video2Time = video2Progress * video2Ref.current.duration
         if (!isNaN(video2Time) && video2Ref.current.duration > 0) {
-          // Clamp to video duration
           video2Ref.current.currentTime = Math.min(video2Time, video2Ref.current.duration - 0.001)
         }
         
-        // Show text when entering video 2 section
+        // Show text
         if (!video2TextVisible) {
           setVideo2TextVisible(true)
         }
       } else if (verticalScroll < video2Start && video2TextVisible) {
-        // Hide text when scrolling back before video 2
         setVideo2TextVisible(false)
       }
       
@@ -346,7 +372,8 @@ export default function Home() {
         scrollbarWidth: "none", 
         msOverflowStyle: "none",
         WebkitOverflowScrolling: "touch",
-        overscrollBehavior: "none"
+        overscrollBehavior: "none",
+        scrollSnapType: "none"
       }}
     >
       {/* First page - horizontal slides */}
