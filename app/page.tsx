@@ -749,16 +749,19 @@ export default function Home() {
             <h3 className="text-3xl font-light text-zinc-800 mb-8">
               <AnimatedText text="Get in Touch" variant="wave" />
             </h3>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-zinc-600">
-              <a href="mailto:info@zenitram.com" className="hover:text-accent transition-colors">
-                info@zenitram.com
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-zinc-600">
+              <a href="mailto:info@zenitram.io" className="hover:text-accent transition-colors">
+                info@zenitram.io
               </a>
               <span className="hidden md:inline text-zinc-400">|</span>
-              <a href="tel:+1234567890" className="hover:text-accent transition-colors">
-                +1 (234) 567-890
+              <a href="tel:+18295760844" className="hover:text-accent transition-colors">
+                +1 (829) 576-0844
               </a>
-              <span className="hidden md:inline text-zinc-400">|</span>
-              <span>San Francisco, CA</span>
+            </div>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-zinc-600 mt-4">
+              <span>Miami, Florida, USA</span>
+              <span className="hidden md:inline text-zinc-400">•</span>
+              <span>Santo Domingo, Dominican Republic</span>
             </div>
           </div>
 
