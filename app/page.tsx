@@ -134,11 +134,11 @@ export default function LandingPage() {
         ))}
       </div>
 
-      {/* Galaxy Transition Overlay */}
-      {showGalaxy && (
+      {/* Galaxy Transition Overlay - only show between pages 3-4, hide on page 5 */}
+      {showGalaxy && currentPage < 4 && (
         <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center">
           <div
-            className="relative h-[70vh] w-[70vh] max-h-[600px] max-w-[600px]"
+            className="relative h-[50vh] w-[50vh] max-h-[400px] max-w-[400px] md:h-[70vh] md:w-[70vh] md:max-h-[600px] md:max-w-[600px]"
             style={{
               animation: "spin 60s linear infinite",
             }}
@@ -307,6 +307,26 @@ export default function LandingPage() {
           background: "linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)",
         }}
       >
+        {/* Left side masked video background */}
+        <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_seamlessly_looping_liquid_metal_iridescent_metallic_8bd899ee-7749-4af1-8f34-a0eab5d90b9e_3.mp4" type="video/mp4" />
+          </video>
+          {/* Fade mask from left to right */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(90deg, rgba(248,248,248,0.7) 0%, rgba(248,248,248,0.9) 50%, #f8f8f8 100%)"
+            }}
+          />
+        </div>
+
         <BlueprintGrid variant="lines" color="oklch(0.3 0 0)" opacity={0.03} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
@@ -318,20 +338,37 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
+            {services.map((service, index) => (
               <button
                 key={service.id}
                 onClick={() => setSelectedService(service.id)}
-                className="group relative overflow-hidden rounded-2xl bg-white p-8 text-left shadow-sm ring-1 ring-black/10 transition-all hover:shadow-xl hover:ring-black/20"
+                className="group relative overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-8 text-left shadow-sm ring-1 ring-black/10 transition-all hover:shadow-xl hover:ring-black/20"
               >
+                {/* Video background in card */}
+                <div className="absolute inset-0 overflow-hidden rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover"
+                  >
+                    <source src={[
+                      "https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4",
+                      "https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4",
+                      "https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4"
+                    ][index % 3]} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black/70" />
+                </div>
                 <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-black/5">
                   <div className="h-full w-0 bg-black transition-all duration-500 group-hover:w-full" />
                 </div>
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-black/5">
-                  <service.icon className="h-7 w-7 text-black/70" strokeWidth={1.5} />
+                <div className="relative z-10 mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-black/5 transition-colors group-hover:bg-white/20">
+                  <service.icon className="h-7 w-7 text-black/70 transition-colors group-hover:text-white" strokeWidth={1.5} />
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-black">{service.title}</h3>
-                <p className="text-sm text-black/60">{service.description}</p>
+                <h3 className="relative z-10 mb-2 text-xl font-bold text-black transition-colors group-hover:text-white">{service.title}</h3>
+                <p className="relative z-10 text-sm text-black/60 transition-colors group-hover:text-white/70">{service.description}</p>
               </button>
             ))}
           </div>
@@ -432,40 +469,31 @@ export default function LandingPage() {
 
       {/* ==================== PAGE 5: LIGHT CTA WITH MASKED VIDEOS ==================== */}
       <section
-        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-white"
         style={{
           scrollSnapAlign: "start",
-          background: "linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%)",
         }}
       >
-        {/* Masked Video Background */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          {/* Vignette/Mask overlay */}
-          <div
-            className="absolute inset-0 z-10"
-            style={{
-              background: "radial-gradient(ellipse at center, transparent 20%, rgba(250,250,250,0.7) 50%, #fafafa 70%)",
-            }}
-          />
-          
+        {/* Masked Video Background - hidden on mobile for performance */}
+        <div className="absolute inset-0 hidden md:flex items-center justify-center">
           {/* Video grid with masking */}
-          <div className="relative h-[80vh] w-[80vw] max-w-5xl overflow-hidden rounded-3xl">
+          <div className="relative h-full w-full overflow-hidden">
             <div className="absolute inset-0 grid grid-cols-3 gap-0">
-              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover">
                 <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
               </video>
-              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover">
                 <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4" type="video/mp4" />
               </video>
-              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover">
                 <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
               </video>
             </div>
-            {/* Inner vignette */}
+            {/* Radial vignette - shows center */}
             <div
               className="absolute inset-0"
               style={{
-                background: "radial-gradient(ellipse at center, transparent 30%, rgba(250,250,250,0.9) 70%, #fafafa 90%)",
+                background: "radial-gradient(ellipse at center, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.85) 30%, rgba(255,255,255,0.95) 60%, #ffffff 80%)",
               }}
             />
           </div>

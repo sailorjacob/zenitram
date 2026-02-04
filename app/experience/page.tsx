@@ -141,8 +141,6 @@ export default function ExperiencePage() {
       const currentWindowHeight = window.innerHeight
       const isVideoPageVisible = verticalScroll > currentWindowHeight * 0.3
       
-      const video1End = currentWindowHeight * 2.5
-
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         if (isAtEnd && e.deltaY > 0 && !isVideoPageVisible) {
           e.preventDefault()
@@ -158,12 +156,6 @@ export default function ExperiencePage() {
         
         if (verticalScroll > 0 && isAtEnd) {
           e.preventDefault()
-          
-          const newScrollTop = verticalScroll + e.deltaY
-          if (newScrollTop >= video1End - 50 && !video1Complete) {
-            verticalScrollRef.current.scrollTop = video1End - 50
-            return
-          }
           
           if (e.deltaY < 0) {
             if (verticalScroll - Math.abs(e.deltaY) <= 0) {
@@ -181,6 +173,7 @@ export default function ExperiencePage() {
               setIsOnVideoPage(verticalScrollRef.current.scrollTop > currentWindowHeight * 0.5)
             }
           } else {
+            // Allow free scrolling down - no lock
             const scrollAmount = Math.min(e.deltaY, 100)
             verticalScrollRef.current.scrollBy({
               top: scrollAmount,
@@ -251,29 +244,16 @@ export default function ExperiencePage() {
         const currentWindowHeight = window.innerHeight
         setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
         
+        // Only do video scrubbing on mobile (where the Star Wars effect is shown)
+        const isMobile = window.innerWidth < 768
         const video1Start = currentWindowHeight
         const video1End = currentWindowHeight * 2.5
         
-        if (verticalScroll >= video1End - 50 && !video1Complete) {
-          verticalScrollRef.current.scrollTop = video1End - 50
-          verticalScroll = video1End - 50
-          setVerticalScrollPosition(verticalScroll)
-          return
-        }
-        
-        if (video1Ref.current && verticalScroll >= video1Start) {
+        if (isMobile && video1Ref.current && verticalScroll >= video1Start && verticalScroll <= video1End) {
           const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
           const video1Time = video1Progress * video1Ref.current.duration
           if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
             video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
-            
-            if (video1Progress >= 0.95 && !video1Complete) {
-              setVideo1Complete(true)
-            }
-            
-            if (video1Progress < 0.1 && video1Complete) {
-              setVideo1Complete(false)
-            }
           }
         }
         
@@ -551,8 +531,40 @@ export default function ExperiencePage() {
         </div>
       </div>
 
-      {/* First video page - Scroll-controlled with Star Wars text */}
-      <div className="relative w-full" style={{ height: '150vh' }}>
+      {/* Video page - Desktop: Simple autoplay video with text overlay, Mobile: Scroll-controlled Star Wars effect */}
+      
+      {/* DESKTOP VERSION - Simple clean video with overlay */}
+      <div className="relative w-full h-screen hidden md:block">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source
+            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-center px-8">
+            <h2 className="text-7xl font-bold text-accent mb-8 tracking-widest" style={{ 
+              textShadow: "0 0 40px currentColor, 0 0 80px currentColor",
+              letterSpacing: "0.2em"
+            }}>
+              ZENITRAM
+            </h2>
+            <p className="text-2xl text-white/80 max-w-2xl mx-auto">
+              Intelligent Living for Modern Homes
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* MOBILE VERSION - Scroll-controlled Star Wars effect */}
+      <div className="relative w-full md:hidden" style={{ height: '150vh' }}>
         <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
           <video
             ref={video1Ref}
@@ -580,39 +592,33 @@ export default function ExperiencePage() {
               }}
             >
               <div className="space-y-16">
-                <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
+                <h2 className="text-5xl font-bold text-accent mb-16 tracking-widest animate-pulse" style={{ 
                   textShadow: "0 0 40px currentColor, 0 0 80px currentColor, 0 8px 40px rgba(0, 0, 0, 1)",
-                  letterSpacing: "0.2em"
+                  letterSpacing: "0.15em"
                 }}>
                   ZENITRAM
                 </h2>
                 
-                <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ 
-                  textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)" 
-                }}>
-                  INTELLIGENT LIVING FEATURES
-                </div>
-                
-                {features.map((feature, index) => (
-                  <div key={index} className="mb-24 opacity-90">
-                    <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
-                      textShadow: "0 0 30px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)",
+                {features.slice(0, 3).map((feature, index) => (
+                  <div key={index} className="mb-20 opacity-90">
+                    <h3 className="text-3xl font-bold text-accent mb-4 tracking-wider" style={{ 
+                      textShadow: "0 0 30px currentColor, 0 8px 40px rgba(0, 0, 0, 1)",
                       letterSpacing: "0.1em"
                     }}>
                       {feature.title.toUpperCase()}
                     </h3>
-                    <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ 
-                      textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)" 
+                    <p className="text-lg text-foreground/95 leading-relaxed max-w-xl mx-auto font-light" style={{ 
+                      textShadow: "0 4px 20px rgba(0, 0, 0, 1)" 
                     }}>
                       {feature.description}
                     </p>
                   </div>
                 ))}
                 
-                <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
-                  textShadow: "0 0 35px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)"
+                <div className="text-2xl font-light text-accent/90 mt-24 mb-[40vh] tracking-wide" style={{ 
+                  textShadow: "0 0 35px currentColor, 0 8px 40px rgba(0, 0, 0, 1)"
                 }}>
-                  Experience the future of intelligent living
+                  Experience the future
                 </div>
               </div>
             </div>
@@ -621,9 +627,9 @@ export default function ExperiencePage() {
       </div>
 
       {/* Final page - Company Info & Footer with Masked Video Background */}
-      <div className="relative w-full min-h-screen overflow-hidden">
-        {/* Video Background with Vignette Mask */}
-        <div className="absolute inset-0">
+      <div className="relative w-full min-h-screen overflow-visible pb-20">
+        {/* Video Background with Vignette Mask - hidden on mobile for performance */}
+        <div className="absolute inset-0 hidden md:block">
           <div className="absolute inset-0 grid grid-cols-3">
             <video autoPlay loop muted playsInline className="h-full w-full object-cover">
               <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
@@ -643,8 +649,11 @@ export default function ExperiencePage() {
             }}
           />
         </div>
+        
+        {/* Mobile background - simple gradient */}
+        <div className="absolute inset-0 md:hidden bg-gradient-to-b from-zinc-100 to-zinc-200" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 md:py-32">
           <div className="text-center mb-20">
             <div className="mb-8">
               <img

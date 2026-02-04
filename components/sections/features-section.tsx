@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useReveal } from "@/hooks/use-reveal"
 import { AnimatedText } from "@/components/animated-text"
 
@@ -40,22 +41,7 @@ export function FeaturesSection() {
   ]
 
   return (
-    <div ref={ref} className="mx-auto w-full max-w-6xl">
-      <div
-        className={`mb-8 sm:mb-12 md:mb-16 transition-all duration-700 ${
-          isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
-        }`}
-      >
-        <h2 className="mb-2 sm:mb-3 font-sans text-3xl sm:text-4xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl text-center">
-          <span className="block">
-            <AnimatedText text="Smart Features" variant="wave" shimmer shimmerSpeed="fast" />
-          </span>
-        </h2>
-        <p className="font-mono text-xs text-foreground/60 md:text-sm text-center">
-          <AnimatedText text="Essential capabilities for modern living" variant="dissolve" />
-        </p>
-      </div>
-
+    <div ref={ref as React.RefObject<HTMLDivElement>} className="mx-auto w-full max-w-6xl">
       <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 md:grid-cols-3 md:gap-10 lg:gap-12">
         {features.map((feature, i) => (
           <div
