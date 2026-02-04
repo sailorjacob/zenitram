@@ -515,7 +515,8 @@ export default function LandingPage() {
               size="lg"
               variant="primary"
               onClick={goToExperience}
-              className="bg-black px-12 py-4 text-lg text-white hover:bg-black/90"
+              className="border-0 px-12 py-4 text-lg"
+              style={{ backgroundColor: "#000", color: "#fff" }}
             >
               Enter Experience
             </MagneticButton>

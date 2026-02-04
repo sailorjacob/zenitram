@@ -9,6 +9,7 @@ interface MagneticButtonProps {
   variant?: "primary" | "secondary" | "ghost"
   size?: "default" | "lg"
   onClick?: () => void
+  style?: React.CSSProperties
 }
 
 export function MagneticButton({
@@ -17,6 +18,7 @@ export function MagneticButton({
   variant = "primary",
   size = "default",
   onClick,
+  style,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null)
   const positionRef = useRef({ x: 0, y: 0 })
@@ -90,6 +92,7 @@ export function MagneticButton({
       style={{
         transform: "translate3d(0px, 0px, 0)",
         contain: "layout style paint",
+        ...style,
       }}
     >
       <span className="relative z-10">{children}</span>
