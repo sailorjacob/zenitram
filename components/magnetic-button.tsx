@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 
 interface MagneticButtonProps {
   children: React.ReactNode
@@ -56,6 +56,18 @@ export function MagneticButton({
       "bg-foreground/5 text-foreground hover:bg-foreground/10 backdrop-blur-xl border border-foreground/10 hover:border-foreground/20",
     ghost: "bg-transparent text-foreground hover:bg-foreground/5 backdrop-blur-sm",
   }
+
+  // Apply GPU acceleration for better performance
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.willChange = "transform"
+    }
+    return () => {
+      if (ref.current) {
+        ref.current.style.willChange = "auto"
+      }
+    }
+  }, [])
 
   const sizes = {
     default: "px-6 py-2.5 text-sm",

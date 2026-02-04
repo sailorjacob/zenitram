@@ -7,6 +7,7 @@ import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
 import { AnimatedText } from "@/components/animated-text"
 import { DreamVideoBackground } from "@/components/dream-video-background"
+import { LandingWrapper } from "@/components/landing/landing-wrapper"
 import { useRef, useEffect, useState, useCallback } from "react"
 
 type ThemeAccent = "sand" | "silver" | "sapphire" | "emerald"
@@ -32,6 +33,7 @@ export default function Home() {
   const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
   const [windowHeight, setWindowHeight] = useState(0)
   const [video1Complete, setVideo1Complete] = useState(false)
+  const [showExistingNav, setShowExistingNav] = useState(false)
 
   const features = [
     {
@@ -340,20 +342,25 @@ export default function Home() {
     }
   }, [currentSection, updateScrollProgress, video1Complete])
 
+  const handleLandingComplete = useCallback(() => {
+    setShowExistingNav(true)
+  }, [])
+
   return (
-    <main 
-      ref={verticalScrollRef}
-      className="relative h-screen w-full overflow-y-auto overflow-x-hidden bg-black"
-      style={{ 
-        scrollbarWidth: "none", 
-        msOverflowStyle: "none",
-        WebkitOverflowScrolling: "touch",
-        overscrollBehavior: "none",
-        scrollSnapType: "none"
-      }}
-    >
-      {/* First page - horizontal slides */}
-      <div className="relative h-screen w-full">
+    <LandingWrapper onComplete={handleLandingComplete}>
+      <main 
+        ref={verticalScrollRef}
+        className="relative h-screen w-full overflow-y-auto overflow-x-hidden bg-black"
+        style={{ 
+          scrollbarWidth: "none", 
+          msOverflowStyle: "none",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "none",
+          scrollSnapType: "none"
+        }}
+      >
+        {/* First page - horizontal slides */}
+        <div className="relative h-screen w-full">
         {/* Dream video background with circular portal effect */}
         <div 
           className="transition-opacity duration-700"
@@ -393,7 +400,7 @@ export default function Home() {
         </div>
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-all duration-700 md:px-12 md:py-6 ${isLoaded ? "opacity-100" : "opacity-0"} ${isOnVideoPage ? "opacity-0 pointer-events-none" : ""}`}
+        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-all duration-700 md:px-12 md:py-6 ${isLoaded && showExistingNav ? "opacity-100" : "opacity-0 pointer-events-none"} ${isOnVideoPage ? "opacity-0 pointer-events-none" : ""}`}
       >
         <button
           onClick={() => scrollToSection(0)}
@@ -729,11 +736,12 @@ export default function Home() {
         </div>
       </div>
 
-      <style jsx global>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-    </main>
+        <style jsx global>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+      </main>
+    </LandingWrapper>
   )
 }

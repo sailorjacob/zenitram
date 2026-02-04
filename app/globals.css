@@ -38,6 +38,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Landing page theme colors */
+  --landing-orange: oklch(0.65 0.18 35);
+  --landing-orange-light: oklch(0.75 0.15 40);
+  --landing-light-bg: oklch(0.98 0.005 260);
+  --landing-light-grey: oklch(0.95 0.005 260);
+  --landing-dark-bg: oklch(0.02 0 0);
 }
 
 .dark {
@@ -257,4 +264,212 @@
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Landing page theme classes */
+.page-dark {
+  background: var(--landing-dark-bg);
+  color: oklch(0.98 0 0);
+}
+
+.page-light {
+  background: var(--landing-light-bg);
+  color: oklch(0.15 0 0);
+}
+
+.page-light-accent {
+  background: linear-gradient(135deg, oklch(0.96 0.01 260), oklch(0.94 0.02 250));
+  color: oklch(0.15 0 0);
+}
+
+/* Landing page specific animations */
+@keyframes landingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes galaxySpin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes blueprintPulse {
+  0%, 100% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.12;
+  }
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Utility animations for landing */
+.animate-landing-fade-in {
+  animation: landingFadeIn 0.8s ease-out forwards;
+}
+
+.animate-galaxy-spin {
+  animation: galaxySpin 60s linear infinite;
+}
+
+.animate-blueprint-pulse {
+  animation: blueprintPulse 4s ease-in-out infinite;
+}
+
+.animate-modal-enter {
+  animation: modalEnter 0.3s ease-out forwards;
+}
+
+.animate-progress-fill {
+  animation: progressFill 1.5s ease-out forwards;
+}
+
+/* Scroll snap for landing pages */
+.landing-pages {
+  scroll-snap-type: y mandatory;
+}
+
+.landing-pages > section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep functionality */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  /* Reduce animation complexity on mobile */
+  .page-dark,
+  .page-light,
+  .page-light-accent {
+    will-change: auto;
+  }
+
+  /* Optimize video backgrounds on mobile */
+  video {
+    object-fit: cover;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Reduce particle count effect on mobile */
+  canvas {
+    opacity: 0.3 !important;
+  }
+
+  /* Optimize scroll performance */
+  .landing-pages {
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+  }
+
+  /* Touch-friendly interactive elements */
+  button,
+  a,
+  input,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Reduce motion if preferred */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .landing-pages section {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* High DPI screen optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  video {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Dark mode support for landing pages */
+@media (prefers-color-scheme: dark) {
+  .page-light {
+    /* Keep light theme even in dark mode preference */
+    color-scheme: light;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .landing-pages section {
+    min-height: 100vh;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduce transparency on low-end devices */
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur-xl,
+  .backdrop-blur-md,
+  .backdrop-blur-sm {
+    backdrop-filter: none;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
 }
