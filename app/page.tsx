@@ -1,747 +1,521 @@
 "use client"
-import { FeaturesSection } from "@/components/sections/features-section"
-import { SolutionsSection } from "@/components/sections/solutions-section"
-import { TechnologySection } from "@/components/sections/technology-section"
-import { ShowcaseSection } from "@/components/sections/showcase-section"
-import { ContactSection } from "@/components/sections/contact-section"
+
+import { useRef, useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { MagneticButton } from "@/components/magnetic-button"
+import { GradientText } from "@/components/effects/gradient-text"
+import { ParticleSystem } from "@/components/effects/particle-system"
+import { ShaderOrbs } from "@/components/effects/shader-orbs"
+import { BlueprintGrid } from "@/components/landing/blueprint-grid"
 import { AnimatedText } from "@/components/animated-text"
-import { DreamVideoBackground } from "@/components/dream-video-background"
-import { LandingWrapper } from "@/components/landing/landing-wrapper"
-import { useRef, useEffect, useState, useCallback } from "react"
+import { ChevronDown, Zap, Shield, Cpu, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin, Check, X } from "lucide-react"
 
-type ThemeAccent = "sand" | "silver" | "sapphire" | "emerald"
-
-const THEME_COLORS = {
-  sand: { color: "oklch(0.85 0.12 50)", name: "Orange" },
-  silver: { color: "oklch(0.75 0.02 260)", name: "Silver" },
-  sapphire: { color: "oklch(0.65 0.2 250)", name: "Blue" },
-  emerald: { color: "oklch(0.7 0.18 160)", name: "Green" },
-}
-
-export default function Home() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const verticalScrollRef = useRef<HTMLDivElement>(null)
-  const video1Ref = useRef<HTMLVideoElement>(null)
-  const [currentSection, setCurrentSection] = useState(0)
+export default function LandingPage() {
+  const router = useRouter()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [currentPage, setCurrentPage] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [themeAccent, setThemeAccent] = useState<ThemeAccent>("silver")
-  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false)
-  const themeDropdownRef = useRef<HTMLDivElement>(null)
-  const [isOnVideoPage, setIsOnVideoPage] = useState(false)
-  const [verticalScrollPosition, setVerticalScrollPosition] = useState(0)
-  const [windowHeight, setWindowHeight] = useState(0)
-  const [video1Complete, setVideo1Complete] = useState(false)
-  const [showExistingNav, setShowExistingNav] = useState(false)
+  const [galaxyProgress, setGalaxyProgress] = useState(0)
+  const [showGalaxy, setShowGalaxy] = useState(false)
+  const [selectedService, setSelectedService] = useState<string | null>(null)
+  const [activeView, setActiveView] = useState<"physical" | "cognitive">("physical")
 
-  const features = [
-    {
-      title: "Intelligent Lighting",
-      description: "Adaptive lighting that responds to your circadian rhythm, adjusts color temperature throughout the day, and learns your preferences for personalized ambiance."
-    },
-    {
-      title: "Climate Control",
-      description: "Precise temperature management with AI-powered learning, geofencing integration, and predictive adjustments based on weather patterns."
-    },
-    {
-      title: "Security Systems",
-      description: "Advanced monitoring with real-time alerts, multi-point door and window sensors, integrated camera feeds, and automated response protocols."
-    },
-    {
-      title: "Audio Integration",
-      description: "Whole-home audio distribution with room-by-room control, streaming services integration, and voice-activated command capabilities."
-    },
-    {
-      title: "Energy Management",
-      description: "Real-time consumption monitoring, automated optimization, renewable energy integration, and detailed usage analytics for sustainability."
-    },
-    {
-      title: "Mobile Control",
-      description: "Seamless app-based control from anywhere in the world with instant feedback, automation scheduling, and emergency override features."
-    }
-  ]
+  const TOTAL_PAGES = 5
 
   useEffect(() => {
     setIsLoaded(true)
-    
-    // Set window height for SSR safety
-    if (typeof window !== 'undefined') {
-      setWindowHeight(window.innerHeight)
-      
-      const handleResize = () => setWindowHeight(window.innerHeight)
-      window.addEventListener('resize', handleResize)
-      
-      return () => window.removeEventListener('resize', handleResize)
-    }
   }, [])
 
+  // Handle scroll to update current page
   useEffect(() => {
-    // Preload video metadata for scrubbing
-    if (video1Ref.current) {
-      video1Ref.current.load()
-    }
-  }, [])
-
-  // Apply theme accent to CSS custom property
-  useEffect(() => {
-    const root = document.documentElement
-    root.style.setProperty("--accent", THEME_COLORS[themeAccent].color)
-  }, [themeAccent])
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
-        setIsThemeDropdownOpen(false)
-      }
-    }
-
-    if (isThemeDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isThemeDropdownOpen])
-
-  const handleThemeSelect = (theme: ThemeAccent) => {
-    setThemeAccent(theme)
-    setIsThemeDropdownOpen(false)
-  }
-
-  // Track scroll progress for dream video background
-  const updateScrollProgress = useCallback(() => {
-    if (!scrollContainerRef.current) return
-    const container = scrollContainerRef.current
-    const maxScroll = container.scrollWidth - container.clientWidth
-    const progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0
-    setScrollProgress(progress)
-  }, [])
-
-  const scrollToSection = (index: number) => {
-    if (scrollContainerRef.current) {
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      scrollContainerRef.current.scrollTo({
-        left: sectionWidth * index,
-        behavior: "smooth",
-      })
-      setCurrentSection(index)
-    }
-  }
-
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (!scrollContainerRef.current || !verticalScrollRef.current || typeof window === 'undefined') return
-
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 10
-      const isAtStart = scrollLeft <= 10
-      
-      // Check if we're on the video page
-      const verticalScroll = verticalScrollRef.current.scrollTop
-      const currentWindowHeight = window.innerHeight
-      const isVideoPageVisible = verticalScroll > currentWindowHeight * 0.3
-      
-      // Video lock boundaries
-      const video1End = currentWindowHeight * 2.5
-
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        // If at the last section and scrolling down, allow vertical scroll to video page
-        if (isAtEnd && e.deltaY > 0 && !isVideoPageVisible) {
-          e.preventDefault()
-          
-          // Limit scroll speed to prevent jumping
-          const scrollAmount = Math.min(Math.abs(e.deltaY), 100)
-          verticalScrollRef.current.scrollBy({
-            top: scrollAmount,
-            behavior: "instant",
-          })
-          setIsOnVideoPage(verticalScrollRef.current.scrollTop > currentWindowHeight * 0.5)
-          return
-        }
-        
-        // If on video page, control vertical scrolling with lock check
-        if (verticalScroll > 0 && isAtEnd) {
-          e.preventDefault()
-          
-          // Check video 1 lock
-          const newScrollTop = verticalScroll + e.deltaY
-          if (newScrollTop >= video1End - 50 && !video1Complete) {
-            // Lock at video 1 boundary
-            verticalScrollRef.current.scrollTop = video1End - 50
-            return
-          }
-          
-          // If scrolling up, go back to horizontal sections
-          if (e.deltaY < 0) {
-            if (verticalScroll - Math.abs(e.deltaY) <= 0) {
-              verticalScrollRef.current.scrollTo({
-                top: 0,
-                behavior: "instant",
-              })
-              setIsOnVideoPage(false)
-            } else {
-              // Limit scroll speed
-              const scrollAmount = Math.max(e.deltaY, -100)
-              verticalScrollRef.current.scrollBy({
-                top: scrollAmount,
-                behavior: "instant",
-              })
-              setIsOnVideoPage(verticalScrollRef.current.scrollTop > currentWindowHeight * 0.5)
-            }
-          } else {
-            // Scrolling down - limit speed
-            const scrollAmount = Math.min(e.deltaY, 100)
-            verticalScrollRef.current.scrollBy({
-              top: scrollAmount,
-              behavior: "instant",
-            })
-          }
-          return
-        }
-
-        // Normal horizontal scroll
-        if (!isVideoPageVisible) {
-          e.preventDefault()
-          scrollContainerRef.current.scrollBy({
-            left: e.deltaY,
-            behavior: "instant",
-          })
-
-          const newScrollLeft = scrollContainerRef.current.scrollLeft
-          const newSection = Math.round(newScrollLeft / sectionWidth)
-
-          if (newSection !== currentSection) {
-            setCurrentSection(newSection)
-          }
-          
-          updateScrollProgress()
-        }
-      }
-    }
-
     const handleScroll = () => {
-      updateScrollProgress()
-      
-      if (!scrollContainerRef.current) return
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const newSection = Math.round(scrollLeft / sectionWidth)
-      
-      if (newSection !== currentSection) {
-        setCurrentSection(newSection)
+      if (!containerRef.current) return
+      const scrollTop = containerRef.current.scrollTop
+      const pageHeight = window.innerHeight
+      const page = Math.round(scrollTop / pageHeight)
+      setCurrentPage(Math.min(page, TOTAL_PAGES - 1))
+
+      // Galaxy transition between pages 3 and 4
+      const page4Start = pageHeight * 3
+      const page5Start = pageHeight * 4
+      const galaxyTransitionStart = page4Start + pageHeight * 0.3
+      const galaxyTransitionEnd = page5Start
+
+      if (scrollTop >= galaxyTransitionStart && scrollTop <= galaxyTransitionEnd) {
+        setShowGalaxy(true)
+        const progress = (scrollTop - galaxyTransitionStart) / (galaxyTransitionEnd - galaxyTransitionStart)
+        setGalaxyProgress(Math.max(0, Math.min(1, progress)))
+      } else {
+        setShowGalaxy(false)
       }
     }
 
-    const handleVerticalScroll = () => {
-      if (!verticalScrollRef.current || !scrollContainerRef.current || typeof window === 'undefined') return
-      let verticalScroll = verticalScrollRef.current.scrollTop
-      
-      // Check if we're at the last horizontal section
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 50
-      
-      // CRITICAL: Prevent vertical scrolling if not at the last horizontal section
-      if (!isAtEnd && verticalScroll > 0) {
-        verticalScrollRef.current.scrollTop = 0
-        return
-      }
-      
-      const currentWindowHeight = window.innerHeight
-      setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
-      
-      // Video scrubbing logic - only one video now
-      const video1Start = currentWindowHeight
-      const video1End = currentWindowHeight * 2.5
-      
-      // ENFORCE LOCK: If scrolled past boundary without completing video 1, snap back
-      if (verticalScroll >= video1End - 50 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video1End - 50
-        verticalScroll = video1End - 50
-        // Don't process further
-        setVerticalScrollPosition(verticalScroll)
-        return
-      }
-      
-      // First (and only) video scrubbing - free scrolling after completion
-      if (video1Ref.current && verticalScroll >= video1Start) {
-        const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
-        const video1Time = video1Progress * video1Ref.current.duration
-        if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
-          video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
-          
-          // Mark complete at 95%
-          if (video1Progress >= 0.95 && !video1Complete) {
-            setVideo1Complete(true)
-          }
-          
-          // Reset if scrolling back
-          if (video1Progress < 0.1 && video1Complete) {
-            setVideo1Complete(false)
-          }
-        }
-      }
-      
-      setVerticalScrollPosition(verticalScroll)
-    }
-
-    const container = scrollContainerRef.current
-    const verticalContainer = verticalScrollRef.current
-    
-    // Touch handling for mobile
-    let touchStartY = 0
-    let touchStartX = 0
-    
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY
-      touchStartX = e.touches[0].clientX
-    }
-    
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!scrollContainerRef.current || !verticalScrollRef.current) return
-      
-      const touchY = e.touches[0].clientY
-      const touchX = e.touches[0].clientX
-      const deltaY = touchStartY - touchY
-      const deltaX = touchStartX - touchX
-      
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 50
-      const verticalScroll = verticalScrollRef.current.scrollTop
-      
-      // If trying to scroll down vertically but not at the end, prevent it
-      if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0 && !isAtEnd && verticalScroll === 0) {
-        e.preventDefault()
-      }
-    }
-    
-    if (container && verticalContainer) {
-      verticalContainer.addEventListener("wheel", handleWheel, { passive: false })
+    const container = containerRef.current
+    if (container) {
       container.addEventListener("scroll", handleScroll, { passive: true })
-      verticalContainer.addEventListener("scroll", handleVerticalScroll, { passive: true })
-      verticalContainer.addEventListener("touchstart", handleTouchStart, { passive: true })
-      verticalContainer.addEventListener("touchmove", handleTouchMove, { passive: false })
     }
-
-    return () => {
-      if (container && verticalContainer) {
-        verticalContainer.removeEventListener("wheel", handleWheel)
-        container.removeEventListener("scroll", handleScroll)
-        verticalContainer.removeEventListener("scroll", handleVerticalScroll)
-        verticalContainer.removeEventListener("touchstart", handleTouchStart)
-        verticalContainer.removeEventListener("touchmove", handleTouchMove)
-      }
-    }
-  }, [currentSection, updateScrollProgress, video1Complete])
-
-  const handleLandingComplete = useCallback(() => {
-    setShowExistingNav(true)
+    return () => container?.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const scrollToPage = useCallback((pageIndex: number) => {
+    if (!containerRef.current) return
+    const pageHeight = window.innerHeight
+    containerRef.current.scrollTo({
+      top: pageIndex * pageHeight,
+      behavior: "smooth",
+    })
+  }, [])
+
+  const goToExperience = useCallback(() => {
+    router.push("/experience")
+  }, [router])
+
+  const services = [
+    { id: "automation", icon: Lightbulb, title: "Smart Automation", description: "Intelligent lighting control" },
+    { id: "climate", icon: Thermometer, title: "Climate Control", description: "Precision temperature" },
+    { id: "security", icon: Lock, title: "Security Systems", description: "Advanced protection" },
+    { id: "audio", icon: Music, title: "Audio Integration", description: "Whole-home sound" },
+    { id: "energy", icon: Battery, title: "Energy Management", description: "Power optimization" },
+    { id: "mobile", icon: Smartphone, title: "Mobile Control", description: "Remote access" },
+  ]
+
+  const isDarkPage = currentPage === 0 || currentPage === 3
 
   return (
-    <LandingWrapper onComplete={handleLandingComplete}>
-      <main 
-        ref={verticalScrollRef}
-        className="relative h-screen w-full overflow-y-auto overflow-x-hidden bg-black"
-        style={{ 
-          scrollbarWidth: "none", 
-          msOverflowStyle: "none",
-          WebkitOverflowScrolling: "touch",
-          overscrollBehavior: "none",
-          scrollSnapType: "none"
-        }}
+    <div
+      ref={containerRef}
+      className="h-screen w-full overflow-y-auto overflow-x-hidden"
+      style={{
+        scrollSnapType: "y mandatory",
+        scrollBehavior: "smooth",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
+      {/* Landing Header */}
+      <header
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
       >
-        {/* First page - horizontal slides */}
-        <div className="relative h-screen w-full">
-        {/* Dream video background with circular portal effect */}
-        <div 
-          className="transition-opacity duration-700"
-          style={{ 
-            opacity: isOnVideoPage ? 0 : 1,
-            visibility: isOnVideoPage ? 'hidden' : 'visible'
-          }}
-        >
-          <DreamVideoBackground scrollProgress={scrollProgress} currentSection={currentSection} />
-        </div>
-        
-        <div 
-          className="fixed inset-0 z-[1] pointer-events-none transition-opacity duration-700" 
-          style={{ 
-            opacity: isOnVideoPage ? 0 : 1,
-            visibility: isOnVideoPage ? 'hidden' : 'visible'
-          }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(5, 5, 8, 0.7) 25%, rgba(3, 3, 6, 0.65) 50%, rgba(8, 8, 12, 0.7) 75%, rgba(0, 0, 0, 0.75) 100%)",
-            }}
-          />
-          {/* Subtle cream grid overlay */}
-          <div className="absolute inset-0 opacity-[0.02]">
-            <div
-              className="h-full w-full"
-              style={{
-                backgroundImage:
-                  "linear-gradient(0deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(200, 180, 150, 1) 25%, rgba(200, 180, 150, 1) 26%, transparent 27%, transparent 74%, rgba(200, 180, 150, 1) 75%, rgba(200, 180, 150, 1) 76%, transparent 77%, transparent)",
-                backgroundSize: "80px 80px",
-              }}
-            />
-          </div>
-        </div>
-
-      <nav
-        className={`fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 transition-all duration-700 md:px-12 md:py-6 ${isLoaded && showExistingNav ? "opacity-100" : "opacity-0 pointer-events-none"} ${isOnVideoPage ? "opacity-0 pointer-events-none" : ""}`}
-      >
-        <button
-          onClick={() => scrollToSection(0)}
-          className="flex items-center transition-transform hover:scale-110 flex-shrink-0"
-        >
-          <div className="relative h-20 w-20 md:h-28 md:w-28 lg:h-32 lg:w-32">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-12 md:py-6">
+          <div className="h-16 w-16 md:h-20 md:w-20">
             <img
               src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
-              alt="Zenitram Logo"
+              alt="Zenitram"
               className="h-full w-full object-contain"
             />
           </div>
-        </button>
-
-        <div className="hidden items-center gap-8 md:flex">
-          {["Home", "Features", "Solutions", "Technology", "Showcase"].map((item, index) => (
-            <button
-              key={item}
-              onClick={() => scrollToSection(index)}
-              className={`group relative font-sans text-sm font-medium transition-colors ${
-                currentSection === index ? "text-accent" : "text-foreground/70 hover:text-foreground"
-              }`}
-            >
-              <AnimatedText text={item} variant="wave" />
-              <span
-                className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 ${
-                  currentSection === index ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              />
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3 md:gap-4">
-          {/* Theme color switcher dropdown */}
-          <div ref={themeDropdownRef} className="relative">
-            <button
-              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-              className="w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 border-2 border-white/80"
-              style={{ 
-                backgroundColor: THEME_COLORS[themeAccent].color,
-              }}
-              title={`Theme: ${THEME_COLORS[themeAccent].name}`}
-            />
-            
-            {/* Dropdown menu */}
-            {isThemeDropdownOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 flex flex-col gap-2 bg-black/90 backdrop-blur-md border border-white/10 rounded-lg p-2 z-50">
-                {(Object.keys(THEME_COLORS) as ThemeAccent[]).map((theme) => (
-                  <button
-                    key={theme}
-                    onClick={() => handleThemeSelect(theme)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
-                      themeAccent === theme 
-                        ? "ring-2 ring-white/60 ring-offset-2 ring-offset-black" 
-                        : "opacity-70 hover:opacity-100"
-                    }`}
-                    style={{ 
-                      backgroundColor: THEME_COLORS[theme].color,
-                    }}
-                    title={THEME_COLORS[theme].name}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <MagneticButton variant="secondary" onClick={() => scrollToSection(5)} className="flex-shrink-0">
-            Start
-          </MagneticButton>
-        </div>
-      </nav>
-
-        <div
-          ref={scrollContainerRef}
-          data-scroll-container
-          className={`relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${
-            isLoaded ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-        {/* Hero Section */}
-        <section className="relative flex h-screen w-screen shrink-0 flex-col items-center justify-center px-4 pt-32 pb-20 sm:px-6 md:px-12 md:py-24">
-          {/* Left-side decorative elements - CSS only, no JS */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* Large animated gradient orbs on left */}
-            <div className="absolute -left-32 top-1/4 h-[600px] w-[600px] animate-blob rounded-full bg-accent/8 blur-3xl" />
-            <div className="absolute left-0 top-1/2 h-[500px] w-[500px] animate-blob animation-delay-2000 rounded-full bg-accent/6 blur-3xl" />
-            <div className="absolute -left-20 bottom-1/4 h-[550px] w-[550px] animate-blob animation-delay-4000 rounded-full bg-accent/7 blur-3xl" />
-            
-            {/* Rotating rings on left */}
-            <div className="absolute left-24 top-1/3 opacity-[0.12]">
-              <div className="relative h-96 w-96">
-                <div className="absolute inset-0 animate-spin-slow rounded-full border-2 border-dashed border-accent/50" style={{ animationDuration: "45s" }} />
-                <div className="absolute inset-12 animate-spin-slow rounded-full border-2 border-dotted border-accent/40" style={{ animationDuration: "30s", animationDirection: "reverse" }} />
-                <div className="absolute inset-24 animate-spin-slow rounded-full border border-accent/30" style={{ animationDuration: "60s" }} />
-              </div>
-            </div>
-            
-            {/* Additional rotating rings on left - lower */}
-            <div className="absolute left-32 bottom-1/4 opacity-[0.1]">
-              <div className="relative h-80 w-80">
-                <div className="absolute inset-0 animate-spin-slow rounded-full border-2 border-accent/45" style={{ animationDuration: "55s", animationDirection: "reverse" }} />
-                <div className="absolute inset-16 animate-spin-slow rounded-full border border-dashed border-accent/35" style={{ animationDuration: "40s" }} />
-              </div>
-            </div>
-            
-            {/* Left side accent circles */}
-            <div className="absolute left-12 top-24 h-20 w-20 animate-pulse rounded-full border-2 border-accent/25 bg-accent/5" style={{ animationDuration: "4s" }} />
-            <div className="absolute left-8 top-1/2 h-16 w-16 animate-pulse rounded-full border-2 border-accent/30 bg-accent/5" style={{ animationDuration: "5s" }} />
-            <div className="absolute left-16 bottom-32 h-24 w-24 animate-pulse rounded-full border-2 border-accent/20 bg-accent/5" style={{ animationDuration: "6s" }} />
-            <div className="absolute left-40 top-1/4 h-12 w-12 animate-pulse rounded-full border border-accent/35" style={{ animationDuration: "4.5s" }} />
-            <div className="absolute left-20 bottom-1/3 h-14 w-14 animate-pulse rounded-full border border-accent/28" style={{ animationDuration: "5.5s" }} />
-          </div>
-          
-          <div className="max-w-4xl relative z-10 w-full">
-            <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl font-light leading-tight tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl text-center">
-              <span className="block">
-                <AnimatedText text="Intelligent Living" variant="wave" shimmer shimmerSpeed="normal" />
-              </span>
-              <span className="block">
-                <AnimatedText text="for Modern Homes" variant="wave" shimmer shimmerSpeed="slow" />
-              </span>
-            </h1>
-            <p className="mb-6 sm:mb-8 mx-auto animate-in fade-in slide-in-from-bottom-4 text-sm sm:text-base leading-relaxed text-foreground/80 duration-1000 delay-200 md:text-lg text-center max-w-2xl px-2">
-              Transform your space with seamless automation. Control lighting, climate, security, and entertainment from
-              anywhere. Designed for elegance, built for intelligence.
-            </p>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 sm:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center justify-center px-4">
-              <MagneticButton size="lg" variant="primary" onClick={() => scrollToSection(1)} className="w-full sm:w-auto">
-                <AnimatedText text="Explore Features" variant="wave" />
-              </MagneticButton>
-              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)} className="w-full sm:w-auto">
-                <AnimatedText text="See Demo" variant="wave" />
-              </MagneticButton>
-            </div>
-          </div>
-
-          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500 z-20">
-            <p className="font-mono text-xs text-foreground/40">© 2026 Zenitram</p>
-          </div>
-        </section>
-
-        {/* Features Section - scrollable on mobile so all bullets/content are readable */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-start justify-center overflow-y-auto overflow-x-hidden px-4 pt-24 pb-24 sm:px-6 sm:pb-28 md:items-center md:overflow-visible md:pb-0 md:pt-0 lg:px-16">
-          <FeaturesSection />
-        </section>
-
-        {/* Solutions Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
-          <SolutionsSection />
-        </section>
-
-        {/* Technology Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
-          <TechnologySection />
-        </section>
-
-        {/* Showcase Section */}
-        <section className="relative flex h-screen w-screen shrink-0 snap-start items-center px-4 pt-24 sm:px-6 md:px-12 md:pt-0 lg:px-16">
-          <ShowcaseSection />
-        </section>
-
-        {/* Contact Section */}
-        <section className="relative flex h-screen w-screen shrink-0 items-center px-4 pt-24 md:px-12 md:pt-0 lg:px-16">
-          <ContactSection scrollToSection={scrollToSection} />
-        </section>
-        </div>
-      </div>
-
-      {/* First video page - Scroll-controlled with Star Wars text */}
-      <div className="relative w-full" style={{ height: '150vh' }}>
-        {/* Scroll-controlled video background - Sticky to viewport */}
-        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
-          <video
-            ref={video1Ref}
-            muted
-            playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover z-0"
+          <MagneticButton
+            variant={isDarkPage ? "secondary" : "primary"}
+            onClick={goToExperience}
+            className={isDarkPage ? "text-white border-white/20" : ""}
           >
-            <source
-              src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/btcxkg/sides2721_Create_a_website_image_asset_for_this_type_of_websi_1132009b-bf1e-4a5c-996b-2905acebeaba_1.mp4"
-              type="video/mp4"
-            />
-          </video>
-          
-          {/* Removed dark overlay for better video visibility */}
-          
-          {/* Star Wars style scrolling text */}
-          <div className="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none z-20" style={{ perspective: "600px", perspectiveOrigin: "50% 100%" }}>
-            <div 
-              className="w-full max-w-4xl px-8 text-center"
-              style={{
-                transform: windowHeight > 0 && verticalScrollPosition >= windowHeight
-                  ? `rotateX(45deg) translateZ(-200px) translateY(${Math.max(-100, 100 - ((verticalScrollPosition - windowHeight) / (windowHeight * 1.5)) * 200)}%)` 
-                  : 'rotateX(45deg) translateZ(-200px) translateY(100%)',
-                transformOrigin: "50% 100%",
-                transformStyle: "preserve-3d",
-                transition: 'none'
-              }}
-            >
-              <div className="space-y-16">
-                <h2 className="text-6xl md:text-7xl font-bold text-accent mb-20 tracking-widest animate-pulse" style={{ 
-                  textShadow: "0 0 40px currentColor, 0 0 80px currentColor, 0 8px 40px rgba(0, 0, 0, 1)",
-                  letterSpacing: "0.2em"
-                }}>
-                  ZENITRAM
-                </h2>
-                
-                <div className="text-4xl md:text-5xl font-light text-foreground mb-24 tracking-wide" style={{ 
-                  textShadow: "0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)" 
-                }}>
-                  INTELLIGENT LIVING FEATURES
-                </div>
-                
-                {features.map((feature, index) => (
-                  <div key={index} className="mb-24 opacity-90">
-                    <h3 className="text-4xl md:text-5xl font-bold text-accent mb-6 tracking-wider" style={{ 
-                      textShadow: "0 0 30px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)",
-                      letterSpacing: "0.1em"
-                    }}>
-                      {feature.title.toUpperCase()}
-                    </h3>
-                    <p className="text-xl md:text-2xl text-foreground/95 leading-relaxed max-w-3xl mx-auto font-light" style={{ 
-                      textShadow: "0 6px 30px rgba(0, 0, 0, 1), 0 2px 15px rgba(0, 0, 0, 1)" 
-                    }}>
-                      {feature.description}
-                    </p>
-                  </div>
-                ))}
-                
-                <div className="text-3xl md:text-4xl font-light text-accent/90 mt-32 mb-[50vh] tracking-wide" style={{ 
-                  textShadow: "0 0 35px currentColor, 0 8px 40px rgba(0, 0, 0, 1), 0 4px 20px rgba(0, 0, 0, 1)"
-                }}>
-                  Experience the future of intelligent living
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            Skip to Experience
+          </MagneticButton>
+        </nav>
+      </header>
+
+      {/* Progress Indicator */}
+      <div className="fixed right-6 top-1/2 z-50 flex -translate-y-1/2 flex-col gap-3 md:right-8">
+        {Array.from({ length: TOTAL_PAGES }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollToPage(i)}
+            className={`h-3 w-3 rounded-full transition-all duration-300 ${
+              currentPage === i
+                ? "scale-125 bg-accent"
+                : isDarkPage
+                ? "bg-white/30 hover:bg-white/50"
+                : "bg-black/20 hover:bg-black/40"
+            }`}
+            aria-label={`Go to page ${i + 1}`}
+          />
+        ))}
       </div>
 
-      {/* Final page - Company Info & Footer */}
-      <div className="relative w-full min-h-screen bg-gradient-to-b from-zinc-50 via-zinc-100 to-zinc-200">
-        <div className="max-w-7xl mx-auto px-6 py-20 md:py-32">
-          {/* Company Info Section */}
-          <div className="text-center mb-20">
-            <div className="mb-8">
+      {/* Galaxy Transition Overlay */}
+      {showGalaxy && (
+        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center">
+          <div
+            className="relative h-[70vh] w-[70vh] max-h-[600px] max-w-[600px]"
+            style={{
+              animation: "spin 60s linear infinite",
+            }}
+          >
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover rounded-full"
+              style={{
+                opacity: 1 - galaxyProgress,
+                mixBlendMode: "screen",
+              }}
+            >
+              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_spinning_galaxy_of_icons_for_home_automation_follow_057e0f0f-7a12-46b6-9100-40f65376e030_0.mp4" type="video/mp4" />
+            </video>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover rounded-full"
+              style={{
+                opacity: galaxyProgress,
+                mixBlendMode: "screen",
+              }}
+            >
+              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_spinning_galaxy_of_icons_for_home_automation_follow_564b0fea-c18a-481e-961e-c0c661e88feb_0.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== PAGE 1: DARK HERO ==================== */}
+      <section
+        className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-black"
+        style={{ scrollSnapAlign: "start" }}
+      >
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+        >
+          <source
+            src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_seamlessly_looping_liquid_metal_iridescent_metallic_4bd03a20-53f5-4dfe-808a-ba93436796ba_3-vmake.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50" />
+
+        <ParticleSystem count={50} color="rgba(255, 255, 255, 0.5)" />
+        <ShaderOrbs count={3} colors={["#85754325", "#aa886620", "#99774415"]} />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
+          <div className="mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="mx-auto h-28 w-28 md:h-36 md:w-36">
               <img
                 src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
-                alt="Zenitram Logo"
-                className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain opacity-90"
+                alt="Zenitram"
+                className="h-full w-full object-contain drop-shadow-2xl"
               />
             </div>
-            <h2 className="text-5xl md:text-6xl font-light text-zinc-800 mb-6 tracking-tight">
-              <AnimatedText text="Zenitram" variant="wave" />
+          </div>
+
+          <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-4 text-5xl font-bold leading-tight tracking-tight duration-1000 delay-200 md:text-7xl lg:text-8xl">
+            <GradientText gradient="linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #ffffff 100%)" animate>
+              The Future of
+            </GradientText>
+            <br />
+            <GradientText gradient="linear-gradient(135deg, #ffffff 0%, #d0d0d0 50%, #ffffff 100%)" animate>
+              Intelligent Living
+            </GradientText>
+          </h1>
+
+          <p className="mb-10 animate-in fade-in slide-in-from-bottom-4 text-xl font-light text-white/80 duration-1000 delay-300 md:text-2xl">
+            Where technology meets intuition
+          </p>
+
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+            <MagneticButton
+              size="lg"
+              variant="primary"
+              onClick={() => scrollToPage(1)}
+              className="px-12 py-4 text-lg"
+            >
+              Enter
+            </MagneticButton>
+          </div>
+        </div>
+
+        <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 animate-in fade-in duration-1000 delay-700">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-medium uppercase tracking-widest text-white/50">Scroll</p>
+            <ChevronDown className="h-5 w-5 animate-bounce text-white/50" />
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== PAGE 2: LIGHT PHILOSOPHY ==================== */}
+      <section
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#fafafa] py-24"
+        style={{ scrollSnapAlign: "start" }}
+      >
+        <div className="pointer-events-none absolute inset-0 opacity-[0.02]">
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage: "linear-gradient(0deg, transparent 24%, #000 25%, #000 26%, transparent 27%), linear-gradient(90deg, transparent 24%, #000 25%, #000 26%, transparent 27%)",
+              backgroundSize: "60px 60px",
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
+          <div className="mb-20 text-center">
+            <h2 className="mb-6 text-5xl font-bold tracking-tight text-black md:text-7xl lg:text-8xl">
+              Built for Tomorrow
             </h2>
-            <p className="text-xl md:text-2xl text-zinc-600 font-light max-w-3xl mx-auto mb-16">
-              <AnimatedText text="Transforming houses into intelligent homes through cutting-edge automation technology." variant="dissolve" />
+            <p className="mx-auto max-w-2xl text-lg text-black/60 md:text-xl">
+              Technology that anticipates, adapts, and enhances every moment.
             </p>
           </div>
 
-          {/* Info Grid */}
-          <div className="grid md:grid-cols-3 gap-12 mb-20">
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Vision" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Creating seamless living experiences where technology anticipates your needs and adapts to your lifestyle.
-              </p>
+          <div className="mb-20 grid gap-8 md:grid-cols-3">
+            {[
+              { icon: Zap, title: "Intuitive", desc: "Systems that understand you" },
+              { icon: Shield, title: "Secure", desc: "Enterprise-grade protection" },
+              { icon: Cpu, title: "Intelligent", desc: "AI that grows with you" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="group rounded-3xl bg-white p-10 shadow-sm ring-1 ring-black/5 transition-all hover:shadow-xl"
+              >
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-black transition-transform group-hover:scale-110">
+                  <item.icon className="h-8 w-8 text-white" strokeWidth={1.5} />
+                </div>
+                <h3 className="mb-3 text-2xl font-bold text-black">{item.title}</h3>
+                <p className="text-black/60">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Partners */}
+          <div className="text-center">
+            <p className="mb-8 text-sm font-medium uppercase tracking-wider text-black/40">
+              Trusted by leading homes
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-12 opacity-40 grayscale">
+              {["Google", "Apple", "Amazon", "Tesla"].map((name) => (
+                <span key={name} className="text-2xl font-bold text-black">{name}</span>
+              ))}
             </div>
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Innovation" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Pioneering smart home solutions that combine elegance with intelligence for modern living spaces.
-              </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== PAGE 3: LIGHT SERVICES ==================== */}
+      <section
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-24"
+        style={{
+          scrollSnapAlign: "start",
+          background: "linear-gradient(135deg, #f5f5f5 0%, #ebebeb 100%)",
+        }}
+      >
+        <BlueprintGrid variant="lines" color="oklch(0.65 0.18 35)" opacity={0.04} />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-5xl font-bold tracking-tight text-black md:text-7xl">
+              What We Do
+            </h2>
+            <p className="text-lg text-black/60">Complete solutions for intelligent living</p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                onClick={() => setSelectedService(service.id)}
+                className="group relative overflow-hidden rounded-2xl bg-white p-8 text-left shadow-sm ring-1 ring-[oklch(0.65_0.18_35)]/20 transition-all hover:shadow-xl hover:ring-[oklch(0.65_0.18_35)]/40"
+              >
+                <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-[oklch(0.65_0.18_35)]/10">
+                  <div className="h-full w-0 bg-[oklch(0.65_0.18_35)] transition-all duration-500 group-hover:w-full" />
+                </div>
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-[oklch(0.65_0.18_35)]/10">
+                  <service.icon className="h-7 w-7 text-[oklch(0.65_0.18_35)]" strokeWidth={1.5} />
+                </div>
+                <h3 className="mb-2 text-xl font-bold text-black">{service.title}</h3>
+                <p className="text-sm text-black/60">{service.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Service Modal */}
+        {selectedService && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={() => setSelectedService(null)}>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" />
+            <div className="relative z-10 mx-4 w-full max-w-2xl rounded-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              <img
+                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_seamlessly_looping_liquid_metal_iridescent_metallic_8bd899ee-7749-4af1-8f34-a0eab5d90b9e_3.gif"
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/90" />
+              <div className="relative p-10">
+                <button
+                  onClick={() => setSelectedService(null)}
+                  className="absolute right-4 top-4 rounded-full bg-white/10 p-2 hover:bg-white/20"
+                >
+                  <X className="h-5 w-5 text-white" />
+                </button>
+                <h2 className="mb-4 text-4xl font-bold text-white">
+                  {services.find((s) => s.id === selectedService)?.title}
+                </h2>
+                <p className="text-lg text-white/80">
+                  Advanced {services.find((s) => s.id === selectedService)?.description.toLowerCase()} solutions designed for modern intelligent homes.
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Excellence" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Delivering premium automation systems designed for reliability, security, and unparalleled user experience.
-              </p>
+          </div>
+        )}
+      </section>
+
+      {/* ==================== PAGE 4: DARK TECHNOLOGY ==================== */}
+      <section
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black py-24"
+        style={{ scrollSnapAlign: "start" }}
+      >
+        <BlueprintGrid variant="lines" color="oklch(0.55 0.22 260)" opacity={0.06} />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-5xl font-bold tracking-tight text-white md:text-7xl">
+              Powered by Intelligence
+            </h2>
+            <p className="text-lg text-white/60">Modular architecture that adapts and improves</p>
+          </div>
+
+          {/* Toggle */}
+          <div className="mb-12 flex justify-center">
+            <div className="inline-flex rounded-full bg-white/5 p-1 backdrop-blur-xl">
+              <button
+                onClick={() => setActiveView("physical")}
+                className={`rounded-full px-8 py-3 text-sm font-bold transition-all ${
+                  activeView === "physical" ? "bg-white text-black" : "text-white/70 hover:text-white"
+                }`}
+              >
+                Physical
+              </button>
+              <button
+                onClick={() => setActiveView("cognitive")}
+                className={`rounded-full px-8 py-3 text-sm font-bold transition-all ${
+                  activeView === "cognitive" ? "bg-white text-black" : "text-white/70 hover:text-white"
+                }`}
+              >
+                Cognitive
+              </button>
             </div>
+          </div>
+
+          {/* Specs */}
+          <div className="grid gap-6 md:grid-cols-4">
+            {[
+              { label: "Response", value: "<50ms" },
+              { label: "Uptime", value: "99.9%" },
+              { label: "Devices", value: "500+" },
+              { label: "Efficiency", value: "+40%" },
+            ].map((spec, i) => (
+              <div key={i} className="group relative overflow-hidden rounded-2xl bg-white/5 p-6 backdrop-blur-xl transition-all hover:bg-white/10">
+                <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[oklch(0.55_0.22_260)] to-transparent opacity-50" />
+                <p className="mb-2 font-mono text-xs uppercase tracking-wider text-white/50">{spec.label}</p>
+                <p className="text-4xl font-bold text-white">{spec.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== PAGE 5: LIGHT CTA WITH MASKED VIDEOS ==================== */}
+      <section
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
+        style={{
+          scrollSnapAlign: "start",
+          background: "linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%)",
+        }}
+      >
+        {/* Masked Video Background */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Vignette/Mask overlay */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              background: "radial-gradient(ellipse at center, transparent 20%, rgba(250,250,250,0.7) 50%, #fafafa 70%)",
+            }}
+          />
+          
+          {/* Video grid with masking */}
+          <div className="relative h-[80vh] w-[80vw] max-w-5xl overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 grid grid-cols-3 gap-0">
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+                <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
+              </video>
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+                <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4" type="video/mp4" />
+              </video>
+              <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-60">
+                <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
+              </video>
+            </div>
+            {/* Inner vignette */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "radial-gradient(ellipse at center, transparent 30%, rgba(250,250,250,0.9) 70%, #fafafa 90%)",
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="relative z-20 mx-auto max-w-4xl px-6 text-center md:px-12">
+          <h2 className="mb-6 text-5xl font-bold tracking-tight text-black md:text-7xl lg:text-8xl">
+            See How It
+            <br />
+            <span className="text-[oklch(0.65_0.18_35)]">All Connects</span>
+          </h2>
+
+          <p className="mb-12 text-xl text-black/60 md:text-2xl">
+            Experience intelligent living in action.
+          </p>
+
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <MagneticButton
+              size="lg"
+              variant="primary"
+              onClick={goToExperience}
+              className="bg-black px-12 py-4 text-lg text-white hover:bg-black/90"
+            >
+              Enter Experience
+            </MagneticButton>
           </div>
 
           {/* Contact Info */}
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-light text-zinc-800 mb-8">
-              <AnimatedText text="Get in Touch" variant="wave" />
-            </h3>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-zinc-600">
-              <a href="mailto:info@zenitram.io" className="hover:text-accent transition-colors">
-                info@zenitram.io
-              </a>
-              <span className="hidden md:inline text-zinc-400">|</span>
-              <a href="tel:+18295760844" className="hover:text-accent transition-colors">
-                +1 (829) 576-0844
-              </a>
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-6 text-sm text-black/50">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              info@zenitram.io
             </div>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-zinc-600 mt-4">
-              <span>Miami, Florida, USA</span>
-              <span className="hidden md:inline text-zinc-400">•</span>
-              <span>Santo Domingo, Dominican Republic</span>
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              +1 (829) 576-0844
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Miami • Santo Domingo
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="border-t border-zinc-300 pt-12">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
-              <div className="flex gap-8">
-                <button onClick={() => scrollToSection(0)} className="hover:text-accent transition-colors">
-                  Home
-                </button>
-                <button onClick={() => scrollToSection(1)} className="hover:text-accent transition-colors">
-                  Features
-                </button>
-                <button onClick={() => scrollToSection(5)} className="hover:text-accent transition-colors">
-                  Contact
-                </button>
-              </div>
-              <div className="text-center md:text-right">
-                <p className="font-mono">© 2026 Zenitram. All rights reserved.</p>
-                <p className="text-xs mt-1">Intelligent Living for Modern Homes</p>
-              </div>
-            </div>
-          </div>
+          <p className="mt-8 font-mono text-xs text-black/30">
+            © 2026 Zenitram. All rights reserved.
+          </p>
         </div>
-      </div>
+      </section>
 
-        <style jsx global>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
-      </main>
-    </LandingWrapper>
+      <style jsx global>{`
+        div::-webkit-scrollbar {
+          display: none;
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
   )
 }
