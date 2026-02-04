@@ -286,7 +286,7 @@ export default function LandingPage() {
           </div>
 
           {/* Partners */}
-          <div className="text-center">
+          <div className="hidden text-center">
             <p className="mb-8 text-sm font-medium uppercase tracking-wider text-black/40">
               Trusted by leading homes
             </p>
