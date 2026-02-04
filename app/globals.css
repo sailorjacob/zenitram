@@ -473,3 +473,43 @@ html {
     background-color: rgba(0, 0, 0, 0.9);
   }
 }
+
+/* Performance optimizations */
+video {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* GPU acceleration for scroll containers */
+[data-scroll-container] {
+  will-change: scroll-position;
+  contain: layout style;
+}
+
+/* Reduce paint areas */
+section {
+  contain: layout style paint;
+}
+
+/* Optimize animations */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-blob,
+  .animate-spin-slow,
+  .animate-pulse {
+    will-change: transform, opacity;
+  }
+}
+
+/* Force GPU compositing for smooth scrolling */
+.landing-pages,
+.existing-homepage {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize modal performance */
+.fixed {
+  contain: layout style;
+}

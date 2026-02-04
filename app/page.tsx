@@ -304,10 +304,10 @@ export default function LandingPage() {
         className="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-24"
         style={{
           scrollSnapAlign: "start",
-          background: "linear-gradient(135deg, #f5f5f5 0%, #ebebeb 100%)",
+          background: "linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)",
         }}
       >
-        <BlueprintGrid variant="lines" color="oklch(0.65 0.18 35)" opacity={0.04} />
+        <BlueprintGrid variant="lines" color="oklch(0.3 0 0)" opacity={0.03} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
           <div className="mb-16 text-center">
@@ -322,13 +322,13 @@ export default function LandingPage() {
               <button
                 key={service.id}
                 onClick={() => setSelectedService(service.id)}
-                className="group relative overflow-hidden rounded-2xl bg-white p-8 text-left shadow-sm ring-1 ring-[oklch(0.65_0.18_35)]/20 transition-all hover:shadow-xl hover:ring-[oklch(0.65_0.18_35)]/40"
+                className="group relative overflow-hidden rounded-2xl bg-white p-8 text-left shadow-sm ring-1 ring-black/10 transition-all hover:shadow-xl hover:ring-black/20"
               >
-                <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-[oklch(0.65_0.18_35)]/10">
-                  <div className="h-full w-0 bg-[oklch(0.65_0.18_35)] transition-all duration-500 group-hover:w-full" />
+                <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-black/5">
+                  <div className="h-full w-0 bg-black transition-all duration-500 group-hover:w-full" />
                 </div>
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-[oklch(0.65_0.18_35)]/10">
-                  <service.icon className="h-7 w-7 text-[oklch(0.65_0.18_35)]" strokeWidth={1.5} />
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-black/5">
+                  <service.icon className="h-7 w-7 text-black/70" strokeWidth={1.5} />
                 </div>
                 <h3 className="mb-2 text-xl font-bold text-black">{service.title}</h3>
                 <p className="text-sm text-black/60">{service.description}</p>
@@ -337,28 +337,36 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Service Modal */}
+        {/* Service Modal with Video Background */}
         {selectedService && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={() => setSelectedService(null)}>
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" />
-            <div className="relative z-10 mx-4 w-full max-w-2xl rounded-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              <img
-                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_seamlessly_looping_liquid_metal_iridescent_metallic_8bd899ee-7749-4af1-8f34-a0eab5d90b9e_3.gif"
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/90" />
-              <div className="relative p-10">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-xl" />
+            <div className="relative z-10 mx-4 w-full max-w-3xl rounded-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              {/* Video Background Grid */}
+              <div className="absolute inset-0 grid grid-cols-3">
+                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
+                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
+                </video>
+                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
+                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4" type="video/mp4" />
+                </video>
+                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
+                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
+                </video>
+              </div>
+              {/* Vignette overlay */}
+              <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.9) 70%)" }} />
+              <div className="relative p-12">
                 <button
                   onClick={() => setSelectedService(null)}
                   className="absolute right-4 top-4 rounded-full bg-white/10 p-2 hover:bg-white/20"
                 >
                   <X className="h-5 w-5 text-white" />
                 </button>
-                <h2 className="mb-4 text-4xl font-bold text-white">
+                <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
                   {services.find((s) => s.id === selectedService)?.title}
                 </h2>
-                <p className="text-lg text-white/80">
+                <p className="text-lg text-white/80 md:text-xl">
                   Advanced {services.find((s) => s.id === selectedService)?.description.toLowerCase()} solutions designed for modern intelligent homes.
                 </p>
               </div>

@@ -124,6 +124,10 @@ export default function ExperiencePage() {
     }
   }
 
+  // Debounce helper for performance
+  const debounceRef = useRef<number | null>(null)
+  const rafRef = useRef<number | null>(null)
+
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (!scrollContainerRef.current || !verticalScrollRef.current || typeof window === 'undefined') return
@@ -193,75 +197,88 @@ export default function ExperiencePage() {
             behavior: "instant",
           })
 
-          const newScrollLeft = scrollContainerRef.current.scrollLeft
-          const newSection = Math.round(newScrollLeft / sectionWidth)
-
-          if (newSection !== currentSection) {
-            setCurrentSection(newSection)
-          }
-          
-          updateScrollProgress()
+          // Use RAF for smoother updates
+          if (rafRef.current) cancelAnimationFrame(rafRef.current)
+          rafRef.current = requestAnimationFrame(() => {
+            if (!scrollContainerRef.current) return
+            const newScrollLeft = scrollContainerRef.current.scrollLeft
+            const newSection = Math.round(newScrollLeft / sectionWidth)
+            if (newSection !== currentSection) {
+              setCurrentSection(newSection)
+            }
+            updateScrollProgress()
+          })
         }
       }
     }
 
     const handleScroll = () => {
-      updateScrollProgress()
-      
-      if (!scrollContainerRef.current) return
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const newSection = Math.round(scrollLeft / sectionWidth)
-      
-      if (newSection !== currentSection) {
-        setCurrentSection(newSection)
-      }
+      // Debounce scroll updates for performance
+      if (debounceRef.current) cancelAnimationFrame(debounceRef.current)
+      debounceRef.current = requestAnimationFrame(() => {
+        updateScrollProgress()
+        
+        if (!scrollContainerRef.current) return
+        const sectionWidth = scrollContainerRef.current.offsetWidth
+        const scrollLeft = scrollContainerRef.current.scrollLeft
+        const newSection = Math.round(scrollLeft / sectionWidth)
+        
+        if (newSection !== currentSection) {
+          setCurrentSection(newSection)
+        }
+      })
     }
 
     const handleVerticalScroll = () => {
       if (!verticalScrollRef.current || !scrollContainerRef.current || typeof window === 'undefined') return
-      let verticalScroll = verticalScrollRef.current.scrollTop
       
-      const sectionWidth = scrollContainerRef.current.offsetWidth
-      const scrollLeft = scrollContainerRef.current.scrollLeft
-      const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
-      const isAtEnd = scrollLeft >= maxScroll - 50
-      
-      if (!isAtEnd && verticalScroll > 0) {
-        verticalScrollRef.current.scrollTop = 0
-        return
-      }
-      
-      const currentWindowHeight = window.innerHeight
-      setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
-      
-      const video1Start = currentWindowHeight
-      const video1End = currentWindowHeight * 2.5
-      
-      if (verticalScroll >= video1End - 50 && !video1Complete) {
-        verticalScrollRef.current.scrollTop = video1End - 50
-        verticalScroll = video1End - 50
-        setVerticalScrollPosition(verticalScroll)
-        return
-      }
-      
-      if (video1Ref.current && verticalScroll >= video1Start) {
-        const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
-        const video1Time = video1Progress * video1Ref.current.duration
-        if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
-          video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
-          
-          if (video1Progress >= 0.95 && !video1Complete) {
-            setVideo1Complete(true)
-          }
-          
-          if (video1Progress < 0.1 && video1Complete) {
-            setVideo1Complete(false)
+      // Use RAF for smooth vertical scroll handling
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        if (!verticalScrollRef.current || !scrollContainerRef.current) return
+        
+        let verticalScroll = verticalScrollRef.current.scrollTop
+        
+        const scrollLeft = scrollContainerRef.current.scrollLeft
+        const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+        const isAtEnd = scrollLeft >= maxScroll - 50
+        
+        if (!isAtEnd && verticalScroll > 0) {
+          verticalScrollRef.current.scrollTop = 0
+          return
+        }
+        
+        const currentWindowHeight = window.innerHeight
+        setIsOnVideoPage(verticalScroll > currentWindowHeight * 0.3)
+        
+        const video1Start = currentWindowHeight
+        const video1End = currentWindowHeight * 2.5
+        
+        if (verticalScroll >= video1End - 50 && !video1Complete) {
+          verticalScrollRef.current.scrollTop = video1End - 50
+          verticalScroll = video1End - 50
+          setVerticalScrollPosition(verticalScroll)
+          return
+        }
+        
+        if (video1Ref.current && verticalScroll >= video1Start) {
+          const video1Progress = Math.min(1, Math.max(0, (verticalScroll - video1Start) / (video1End - video1Start)))
+          const video1Time = video1Progress * video1Ref.current.duration
+          if (!isNaN(video1Time) && video1Ref.current.duration > 0) {
+            video1Ref.current.currentTime = Math.min(video1Time, video1Ref.current.duration - 0.001)
+            
+            if (video1Progress >= 0.95 && !video1Complete) {
+              setVideo1Complete(true)
+            }
+            
+            if (video1Progress < 0.1 && video1Complete) {
+              setVideo1Complete(false)
+            }
           }
         }
-      }
-      
-      setVerticalScrollPosition(verticalScroll)
+        
+        setVerticalScrollPosition(verticalScroll)
+      })
     }
 
     const container = scrollContainerRef.current
@@ -283,7 +300,6 @@ export default function ExperiencePage() {
       const deltaY = touchStartY - touchY
       const deltaX = touchStartX - touchX
       
-      const sectionWidth = scrollContainerRef.current.offsetWidth
       const scrollLeft = scrollContainerRef.current.scrollLeft
       const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
       const isAtEnd = scrollLeft >= maxScroll - 50
@@ -310,6 +326,8 @@ export default function ExperiencePage() {
         verticalContainer.removeEventListener("touchstart", handleTouchStart)
         verticalContainer.removeEventListener("touchmove", handleTouchMove)
       }
+      if (debounceRef.current) cancelAnimationFrame(debounceRef.current)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [currentSection, updateScrollProgress, video1Complete])
 
@@ -602,89 +620,87 @@ export default function ExperiencePage() {
         </div>
       </div>
 
-      {/* Final page - Company Info & Footer */}
-      <div className="relative w-full min-h-screen bg-gradient-to-b from-zinc-50 via-zinc-100 to-zinc-200">
-        <div className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+      {/* Final page - Company Info & Footer with Masked Video Background */}
+      <div className="relative w-full min-h-screen overflow-hidden">
+        {/* Video Background with Vignette Mask */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 grid grid-cols-3">
+            <video autoPlay loop muted playsInline className="h-full w-full object-cover">
+              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
+            </video>
+            <video autoPlay loop muted playsInline className="h-full w-full object-cover">
+              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4" type="video/mp4" />
+            </video>
+            <video autoPlay loop muted playsInline className="h-full w-full object-cover">
+              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
+            </video>
+          </div>
+          {/* Radial vignette - fades to show center */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: "radial-gradient(ellipse at center, rgba(250,250,250,0.85) 0%, rgba(245,245,245,0.92) 30%, rgba(240,240,240,0.97) 60%, #f0f0f0 100%)"
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-32">
           <div className="text-center mb-20">
             <div className="mb-8">
               <img
                 src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
                 alt="Zenitram Logo"
-                className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain opacity-90"
+                className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain"
               />
             </div>
-            <h2 className="text-5xl md:text-6xl font-light text-zinc-800 mb-6 tracking-tight">
-              <AnimatedText text="Zenitram" variant="wave" />
+            <h2 className="text-5xl md:text-7xl font-bold text-zinc-900 mb-6 tracking-tight">
+              Zenitram
             </h2>
-            <p className="text-xl md:text-2xl text-zinc-600 font-light max-w-3xl mx-auto mb-16">
-              <AnimatedText text="Transforming houses into intelligent homes through cutting-edge automation technology." variant="dissolve" />
+            <p className="text-xl md:text-2xl text-zinc-600 max-w-2xl mx-auto">
+              Intelligent homes. Seamless living.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12 mb-20">
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Vision" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Creating seamless living experiences where technology anticipates your needs and adapts to your lifestyle.
-              </p>
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Vision</h3>
+              <p className="text-zinc-600">Technology that anticipates your needs.</p>
             </div>
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Innovation" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Pioneering smart home solutions that combine elegance with intelligence for modern living spaces.
-              </p>
+            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Innovation</h3>
+              <p className="text-zinc-600">Elegance meets intelligence.</p>
             </div>
-            <div className="text-center">
-              <h3 className="text-2xl font-light text-zinc-800 mb-4">
-                <AnimatedText text="Excellence" variant="cut" />
-              </h3>
-              <p className="text-zinc-600 leading-relaxed">
-                Delivering premium automation systems designed for reliability, security, and unparalleled user experience.
-              </p>
+            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Excellence</h3>
+              <p className="text-zinc-600">Premium automation systems.</p>
             </div>
           </div>
 
           <div className="text-center mb-16">
-            <h3 className="text-3xl font-light text-zinc-800 mb-8">
-              <AnimatedText text="Get in Touch" variant="wave" />
-            </h3>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-zinc-600">
-              <a href="mailto:info@zenitram.io" className="hover:text-accent transition-colors">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-zinc-700">
+              <a href="mailto:info@zenitram.io" className="hover:text-black transition-colors font-medium">
                 info@zenitram.io
               </a>
               <span className="hidden md:inline text-zinc-400">|</span>
-              <a href="tel:+18295760844" className="hover:text-accent transition-colors">
+              <a href="tel:+18295760844" className="hover:text-black transition-colors font-medium">
                 +1 (829) 576-0844
               </a>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-zinc-600 mt-4">
-              <span>Miami, Florida, USA</span>
+              <span>Miami, FL</span>
               <span className="hidden md:inline text-zinc-400">•</span>
-              <span>Santo Domingo, Dominican Republic</span>
+              <span>Santo Domingo, DR</span>
             </div>
           </div>
 
-          <div className="border-t border-zinc-300 pt-12">
+          <div className="border-t border-zinc-300/50 pt-12">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
               <div className="flex gap-8">
-                <a href="/" className="hover:text-accent transition-colors">
-                  Home
-                </a>
-                <button onClick={() => scrollToSection(1)} className="hover:text-accent transition-colors">
-                  Features
-                </button>
-                <button onClick={() => scrollToSection(5)} className="hover:text-accent transition-colors">
-                  Contact
-                </button>
+                <a href="/" className="hover:text-black transition-colors">Home</a>
+                <button onClick={() => scrollToSection(1)} className="hover:text-black transition-colors">Features</button>
+                <button onClick={() => scrollToSection(5)} className="hover:text-black transition-colors">Contact</button>
               </div>
-              <div className="text-center md:text-right">
-                <p className="font-mono">© 2026 Zenitram. All rights reserved.</p>
-                <p className="text-xs mt-1">Intelligent Living for Modern Homes</p>
-              </div>
+              <p className="font-mono">© 2026 Zenitram</p>
             </div>
           </div>
         </div>
