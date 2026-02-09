@@ -405,9 +405,7 @@ html {
     transform: translateZ(0);
   }
 
-  /* Touch-friendly interactive elements */
-  button,
-  a,
+  /* Touch-friendly interactive elements - exclude small indicator dots */
   input,
   textarea {
     min-height: 44px;

@@ -6,7 +6,6 @@ import { MagneticButton } from "@/components/magnetic-button"
 import { GradientText } from "@/components/effects/gradient-text"
 import { ParticleSystem } from "@/components/effects/particle-system"
 import { ShaderOrbs } from "@/components/effects/shader-orbs"
-import { BlueprintGrid } from "@/components/landing/blueprint-grid"
 import { ChevronDown, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin } from "lucide-react"
 
 export default function LandingPage() {
@@ -68,8 +67,7 @@ export default function LandingPage() {
       ref={containerRef}
       className="h-screen w-full overflow-y-auto overflow-x-hidden"
       style={{
-        scrollSnapType: "y mandatory",
-        scrollBehavior: "smooth",
+        scrollSnapType: "y proximity",
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
@@ -174,42 +172,33 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ==================== PAGE 2: LIGHT SERVICES ==================== */}
+      {/* ==================== PAGE 2: SERVICES ==================== */}
       <section
-        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-24"
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black py-24"
         style={{
           scrollSnapAlign: "start",
-          background: "linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)",
         }}
       >
-        {/* Left side masked video background */}
-        <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
+        {/* Full-width video background with dark overlay */}
+        <div className="absolute inset-0 overflow-hidden">
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover opacity-30"
           >
             <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_seamlessly_looping_liquid_metal_iridescent_metallic_8bd899ee-7749-4af1-8f34-a0eab5d90b9e_3.mp4" type="video/mp4" />
           </video>
-          {/* Fade mask from left to right */}
-          <div 
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(90deg, rgba(248,248,248,0.15) 0%, rgba(248,248,248,0.25) 50%, rgba(248,248,248,0.4) 100%)"
-            }}
-          />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
-
-        <BlueprintGrid variant="lines" color="oklch(0.3 0 0)" opacity={0.03} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-5xl font-bold tracking-tight text-black md:text-7xl">
+            <h2 className="mb-4 text-5xl font-bold tracking-tight text-white md:text-7xl">
               What We Do
             </h2>
-            <p className="text-lg text-black/60">Complete solutions for intelligent living</p>
+            <p className="text-lg text-white/60">Complete solutions for intelligent living</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -271,11 +260,11 @@ export default function LandingPage() {
                 <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
               </video>
             </div>
-            {/* Subtle vignette - keeps videos visible */}
+            {/* Dark vignette overlay */}
             <div
               className="absolute inset-0"
               style={{
-                background: "radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.75) 100%)",
+                background: "radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.8) 70%, rgba(0,0,0,0.9) 100%)",
               }}
             />
           </div>
