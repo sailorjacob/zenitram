@@ -643,10 +643,10 @@ export default function ExperiencePage() {
         </div>
       </div>
 
-      {/* Final page - Company Info & Footer with Masked Video Background */}
-      <div className="relative w-full min-h-screen overflow-visible pb-20">
-        {/* Video Background with Vignette Mask - hidden on mobile for performance */}
-        <div className="absolute inset-0 hidden md:block">
+      {/* Final page - Dark theme with video background */}
+      <div className="relative w-full min-h-screen overflow-visible bg-black">
+        {/* Video Background - visible on all devices */}
+        <div className="absolute inset-0">
           <div className="absolute inset-0 grid grid-cols-3">
             <video autoPlay loop muted playsInline className="h-full w-full object-cover">
               <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
@@ -658,77 +658,50 @@ export default function ExperiencePage() {
               <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
             </video>
           </div>
-          {/* Radial vignette - fades to show center */}
-          <div 
-            className="absolute inset-0"
-            style={{
-              background: "radial-gradient(ellipse at center, rgba(250,250,250,0.85) 0%, rgba(245,245,245,0.92) 30%, rgba(240,240,240,0.97) 60%, #f0f0f0 100%)"
-            }}
-          />
+          {/* Dark overlay - lets videos show through */}
+          <div className="absolute inset-0 bg-black/60" />
         </div>
-        
-        {/* Mobile background - simple gradient */}
-        <div className="absolute inset-0 md:hidden bg-gradient-to-b from-zinc-100 to-zinc-200" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 md:py-32">
-          <div className="text-center mb-20">
-            <div className="mb-8">
+        <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 md:py-32 flex flex-col items-center justify-center min-h-screen">
+          <div className="text-center mb-16">
+            <div className="mb-6">
               <img
                 src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
                 alt="Zenitram Logo"
-                className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain"
+                className="h-24 w-24 md:h-32 md:w-32 mx-auto object-contain"
               />
             </div>
-            <h2 className="text-5xl md:text-7xl font-bold text-zinc-900 mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
               Zenitram
             </h2>
-            <p className="text-xl md:text-2xl text-zinc-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/60">
               Intelligent homes. Seamless living.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
-            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Vision</h3>
-              <p className="text-zinc-600">Technology that anticipates your needs.</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Innovation</h3>
-              <p className="text-zinc-600">Elegance meets intelligence.</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-zinc-900 mb-3">Excellence</h3>
-              <p className="text-zinc-600">Premium automation systems.</p>
-            </div>
-          </div>
-
-          <div className="text-center mb-16">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-zinc-700">
-              <a href="mailto:info@zenitram.io" className="hover:text-black transition-colors font-medium">
+          <div className="w-full border-t border-white/10 pt-12 mb-12">
+            <div className="flex flex-col items-center gap-4 text-white/70">
+              <a href="mailto:info@zenitram.io" className="hover:text-white transition-colors">
                 info@zenitram.io
               </a>
-              <span className="hidden md:inline text-zinc-400">|</span>
-              <a href="tel:+18295760844" className="hover:text-black transition-colors font-medium">
+              <a href="tel:+18295760844" className="hover:text-white transition-colors">
                 +1 (829) 576-0844
               </a>
-            </div>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-zinc-600 mt-4">
-              <span>Miami, FL</span>
-              <span className="hidden md:inline text-zinc-400">•</span>
-              <span>Santo Domingo, DR</span>
+              <div className="flex items-center gap-3 text-white/50">
+                <span>Miami, FL</span>
+                <span>•</span>
+                <span>Santo Domingo, DR</span>
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-zinc-300/50 pt-12">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
-              <div className="flex gap-8">
-                <a href="/" className="hover:text-black transition-colors">Home</a>
-                <button onClick={() => scrollToSection(1)} className="hover:text-black transition-colors">Features</button>
-                <button onClick={() => scrollToSection(5)} className="hover:text-black transition-colors">Contact</button>
-              </div>
-              <p className="font-mono">© 2026 Zenitram</p>
-            </div>
+          <div className="flex items-center gap-6 text-sm text-white/40">
+            <a href="/" className="hover:text-white transition-colors">Home</a>
+            <button onClick={() => scrollToSection(1)} className="hover:text-white transition-colors">Features</button>
+            <button onClick={() => scrollToSection(5)} className="hover:text-white transition-colors">Contact</button>
           </div>
+
+          <p className="mt-8 font-mono text-xs text-white/30">© 2026 Zenitram</p>
         </div>
       </div>
 
