@@ -7,20 +7,16 @@ import { GradientText } from "@/components/effects/gradient-text"
 import { ParticleSystem } from "@/components/effects/particle-system"
 import { ShaderOrbs } from "@/components/effects/shader-orbs"
 import { BlueprintGrid } from "@/components/landing/blueprint-grid"
-import { AnimatedText } from "@/components/animated-text"
-import { ChevronDown, Zap, Shield, Cpu, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin, Check, X } from "lucide-react"
+import { ChevronDown, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin, X } from "lucide-react"
 
 export default function LandingPage() {
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [galaxyProgress, setGalaxyProgress] = useState(0)
-  const [showGalaxy, setShowGalaxy] = useState(false)
   const [selectedService, setSelectedService] = useState<string | null>(null)
-  const [activeView, setActiveView] = useState<"physical" | "cognitive">("physical")
 
-  const TOTAL_PAGES = 5
+  const TOTAL_PAGES = 3
 
   useEffect(() => {
     setIsLoaded(true)
@@ -35,19 +31,6 @@ export default function LandingPage() {
       const page = Math.round(scrollTop / pageHeight)
       setCurrentPage(Math.min(page, TOTAL_PAGES - 1))
 
-      // Galaxy transition between pages 3 and 4
-      const page4Start = pageHeight * 3
-      const page5Start = pageHeight * 4
-      const galaxyTransitionStart = page4Start + pageHeight * 0.3
-      const galaxyTransitionEnd = page5Start
-
-      if (scrollTop >= galaxyTransitionStart && scrollTop <= galaxyTransitionEnd) {
-        setShowGalaxy(true)
-        const progress = (scrollTop - galaxyTransitionStart) / (galaxyTransitionEnd - galaxyTransitionStart)
-        setGalaxyProgress(Math.max(0, Math.min(1, progress)))
-      } else {
-        setShowGalaxy(false)
-      }
     }
 
     const container = containerRef.current
@@ -79,7 +62,7 @@ export default function LandingPage() {
     { id: "mobile", icon: Smartphone, title: "Mobile Control", description: "Remote access" },
   ]
 
-  const isDarkPage = currentPage === 0 || currentPage === 3
+  const isDarkPage = currentPage === 0 || currentPage === 2
 
   return (
     <div
@@ -134,45 +117,6 @@ export default function LandingPage() {
         ))}
       </div>
 
-      {/* Galaxy Transition Overlay - only show between pages 3-4, hide on page 5 */}
-      {showGalaxy && currentPage < 4 && (
-        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center">
-          <div
-            className="relative h-[50vh] w-[50vh] max-h-[400px] max-w-[400px] md:h-[70vh] md:w-[70vh] md:max-h-[600px] md:max-w-[600px]"
-            style={{
-              animation: "spin 60s linear infinite",
-            }}
-          >
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover rounded-full"
-              style={{
-                opacity: 1 - galaxyProgress,
-                mixBlendMode: "screen",
-              }}
-            >
-              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_spinning_galaxy_of_icons_for_home_automation_follow_057e0f0f-7a12-46b6-9100-40f65376e030_0.mp4" type="video/mp4" />
-            </video>
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover rounded-full"
-              style={{
-                opacity: galaxyProgress,
-                mixBlendMode: "screen",
-              }}
-            >
-              <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/sides2721_spinning_galaxy_of_icons_for_home_automation_follow_564b0fea-c18a-481e-961e-c0c661e88feb_0.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </div>
-      )}
-
       {/* ==================== PAGE 1: DARK HERO ==================== */}
       <section
         className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-black"
@@ -197,16 +141,6 @@ export default function LandingPage() {
         <ShaderOrbs count={3} colors={["#85754325", "#aa886620", "#99774415"]} />
 
         <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-          <div className="mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <div className="mx-auto h-28 w-28 md:h-36 md:w-36">
-              <img
-                src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/images/Zenitram%20logo.png"
-                alt="Zenitram"
-                className="h-full w-full object-contain drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
           <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-4 text-5xl font-bold leading-tight tracking-tight duration-1000 delay-200 md:text-7xl lg:text-8xl">
             <GradientText gradient="linear-gradient(135deg, #ffffff 0%, #c0c0c0 50%, #ffffff 100%)" animate>
               The Future of
@@ -241,65 +175,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ==================== PAGE 2: LIGHT PHILOSOPHY ==================== */}
-      <section
-        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#fafafa] py-24"
-        style={{ scrollSnapAlign: "start" }}
-      >
-        <div className="pointer-events-none absolute inset-0 opacity-[0.02]">
-          <div
-            className="h-full w-full"
-            style={{
-              backgroundImage: "linear-gradient(0deg, transparent 24%, #000 25%, #000 26%, transparent 27%), linear-gradient(90deg, transparent 24%, #000 25%, #000 26%, transparent 27%)",
-              backgroundSize: "60px 60px",
-            }}
-          />
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
-          <div className="mb-20 text-center">
-            <h2 className="mb-6 text-5xl font-bold tracking-tight text-black md:text-7xl lg:text-8xl">
-              Built for Tomorrow
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-black/60 md:text-xl">
-              Technology that anticipates, adapts, and enhances every moment.
-            </p>
-          </div>
-
-          <div className="mb-20 grid gap-8 md:grid-cols-3">
-            {[
-              { icon: Zap, title: "Intuitive", desc: "Systems that understand you" },
-              { icon: Shield, title: "Secure", desc: "Enterprise-grade protection" },
-              { icon: Cpu, title: "Intelligent", desc: "AI that grows with you" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="group rounded-3xl bg-white p-10 shadow-sm ring-1 ring-black/5 transition-all hover:shadow-xl"
-              >
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-black transition-transform group-hover:scale-110">
-                  <item.icon className="h-8 w-8 text-white" strokeWidth={1.5} />
-                </div>
-                <h3 className="mb-3 text-2xl font-bold text-black">{item.title}</h3>
-                <p className="text-black/60">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Partners */}
-          <div className="hidden text-center">
-            <p className="mb-8 text-sm font-medium uppercase tracking-wider text-black/40">
-              Trusted by leading homes
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-12 opacity-40 grayscale">
-              {["Google", "Apple", "Amazon", "Tesla"].map((name) => (
-                <span key={name} className="text-2xl font-bold text-black">{name}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ==================== PAGE 3: LIGHT SERVICES ==================== */}
+      {/* ==================== PAGE 2: LIGHT SERVICES ==================== */}
       <section
         className="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-24"
         style={{
@@ -322,7 +198,7 @@ export default function LandingPage() {
           <div 
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(90deg, rgba(248,248,248,0.7) 0%, rgba(248,248,248,0.9) 50%, #f8f8f8 100%)"
+              background: "linear-gradient(90deg, rgba(248,248,248,0.15) 0%, rgba(248,248,248,0.25) 50%, rgba(248,248,248,0.4) 100%)"
             }}
           />
         </div>
@@ -342,10 +218,10 @@ export default function LandingPage() {
               <button
                 key={service.id}
                 onClick={() => setSelectedService(service.id)}
-                className="group relative overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm p-8 text-left shadow-sm ring-1 ring-black/10 transition-all hover:shadow-xl hover:ring-black/20"
+                className="group relative overflow-hidden rounded-2xl bg-black/40 backdrop-blur-sm p-8 text-left shadow-lg ring-1 ring-white/10 transition-all hover:shadow-xl hover:ring-white/20"
               >
                 {/* Video background in card */}
-                <div className="absolute inset-0 overflow-hidden rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute inset-0 overflow-hidden rounded-2xl opacity-100">
                   <video
                     autoPlay
                     loop
@@ -361,14 +237,14 @@ export default function LandingPage() {
                   </video>
                   <div className="absolute inset-0 bg-black/70" />
                 </div>
-                <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-black/5">
-                  <div className="h-full w-0 bg-black transition-all duration-500 group-hover:w-full" />
+                <div className="absolute left-0 top-0 h-1 w-full overflow-hidden bg-white/10">
+                  <div className="h-full w-0 bg-white transition-all duration-500 group-hover:w-full" />
                 </div>
-                <div className="relative z-10 mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-black/5 transition-colors group-hover:bg-white/20">
-                  <service.icon className="h-7 w-7 text-black/70 transition-colors group-hover:text-white" strokeWidth={1.5} />
+                <div className="relative z-10 mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+                  <service.icon className="h-7 w-7 text-white" strokeWidth={1.5} />
                 </div>
-                <h3 className="relative z-10 mb-2 text-xl font-bold text-black transition-colors group-hover:text-white">{service.title}</h3>
-                <p className="relative z-10 text-sm text-black/60 transition-colors group-hover:text-white/70">{service.description}</p>
+                <h3 className="relative z-10 mb-2 text-xl font-bold text-white">{service.title}</h3>
+                <p className="relative z-10 text-sm text-white/70">{service.description}</p>
               </button>
             ))}
           </div>
@@ -412,70 +288,15 @@ export default function LandingPage() {
         )}
       </section>
 
-      {/* ==================== PAGE 4: DARK TECHNOLOGY ==================== */}
+      {/* ==================== PAGE 3: CTA WITH MASKED VIDEOS ==================== */}
       <section
-        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black py-24"
-        style={{ scrollSnapAlign: "start" }}
-      >
-        <BlueprintGrid variant="lines" color="oklch(0.55 0.22 260)" opacity={0.06} />
-
-        <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-5xl font-bold tracking-tight text-white md:text-7xl">
-              Powered by Intelligence
-            </h2>
-            <p className="text-lg text-white/60">Modular architecture that adapts and improves</p>
-          </div>
-
-          {/* Toggle */}
-          <div className="mb-12 flex justify-center">
-            <div className="inline-flex rounded-full bg-white/5 p-1 backdrop-blur-xl">
-              <button
-                onClick={() => setActiveView("physical")}
-                className={`rounded-full px-8 py-3 text-sm font-bold transition-all ${
-                  activeView === "physical" ? "bg-white text-black" : "text-white/70 hover:text-white"
-                }`}
-              >
-                Physical
-              </button>
-              <button
-                onClick={() => setActiveView("cognitive")}
-                className={`rounded-full px-8 py-3 text-sm font-bold transition-all ${
-                  activeView === "cognitive" ? "bg-white text-black" : "text-white/70 hover:text-white"
-                }`}
-              >
-                Cognitive
-              </button>
-            </div>
-          </div>
-
-          {/* Specs */}
-          <div className="grid gap-6 md:grid-cols-4">
-            {[
-              { label: "Response", value: "<50ms" },
-              { label: "Uptime", value: "99.9%" },
-              { label: "Devices", value: "500+" },
-              { label: "Efficiency", value: "+40%" },
-            ].map((spec, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-2xl bg-white/5 p-6 backdrop-blur-xl transition-all hover:bg-white/10">
-                <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[oklch(0.55_0.22_260)] to-transparent opacity-50" />
-                <p className="mb-2 font-mono text-xs uppercase tracking-wider text-white/50">{spec.label}</p>
-                <p className="text-4xl font-bold text-white">{spec.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ==================== PAGE 5: LIGHT CTA WITH MASKED VIDEOS ==================== */}
-      <section
-        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-white"
+        className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black"
         style={{
           scrollSnapAlign: "start",
         }}
       >
-        {/* Masked Video Background - hidden on mobile for performance */}
-        <div className="absolute inset-0 hidden md:flex items-center justify-center">
+        {/* Masked Video Background - visible on all devices */}
+        <div className="absolute inset-0 flex items-center justify-center">
           {/* Video grid with masking */}
           <div className="relative h-full w-full overflow-hidden">
             <div className="absolute inset-0 grid grid-cols-3 gap-0">
@@ -489,24 +310,24 @@ export default function LandingPage() {
                 <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
               </video>
             </div>
-            {/* Radial vignette - shows center */}
+            {/* Subtle vignette - keeps videos visible */}
             <div
               className="absolute inset-0"
               style={{
-                background: "radial-gradient(ellipse at center, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.85) 30%, rgba(255,255,255,0.95) 60%, #ffffff 80%)",
+                background: "radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.75) 100%)",
               }}
             />
           </div>
         </div>
 
         <div className="relative z-20 mx-auto max-w-4xl px-6 text-center md:px-12">
-          <h2 className="mb-6 text-5xl font-bold tracking-tight text-black md:text-7xl lg:text-8xl">
+          <h2 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl lg:text-8xl">
             See How It
             <br />
-            <span className="text-[oklch(0.65_0.18_35)]">All Connects</span>
+            <span className="text-[oklch(0.75_0.18_35)]">All Connects</span>
           </h2>
 
-          <p className="mb-12 text-xl text-black/60 md:text-2xl">
+          <p className="mb-12 text-xl text-white/70 md:text-2xl">
             Experience intelligent living in action.
           </p>
 
@@ -516,14 +337,14 @@ export default function LandingPage() {
               variant="primary"
               onClick={goToExperience}
               className="border-0 px-12 py-4 text-lg"
-              style={{ backgroundColor: "#000", color: "#fff" }}
+              style={{ backgroundColor: "#fff", color: "#000" }}
             >
               Enter Experience
             </MagneticButton>
           </div>
 
           {/* Contact Info */}
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-6 text-sm text-black/50">
+          <div className="mt-16 flex flex-col items-center gap-4 text-sm text-white/70 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
               info@zenitram.io
@@ -538,7 +359,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <p className="mt-8 font-mono text-xs text-black/30">
+          <p className="mt-8 font-mono text-xs text-white/40">
             © 2026 Zenitram. All rights reserved.
           </p>
         </div>
