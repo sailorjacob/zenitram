@@ -403,7 +403,7 @@ export default function ExperiencePage() {
           <div ref={themeDropdownRef} className="relative">
             <button
               onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-              className="w-1.5 h-1.5 md:w-3 md:h-3 rounded-full transition-all duration-300 hover:scale-125 border-2 border-white/80"
+              className="w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 border-2 border-white/80"
               style={{ 
                 backgroundColor: THEME_COLORS[themeAccent].color,
               }}
@@ -417,7 +417,7 @@ export default function ExperiencePage() {
                   <button
                     key={theme}
                     onClick={() => handleThemeSelect(theme)}
-                    className={`w-1.5 h-1.5 md:w-3 md:h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                    className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
                       themeAccent === theme 
                         ? "ring-2 ring-white/60 ring-offset-2 ring-offset-black" 
                         : "opacity-70 hover:opacity-100"

@@ -104,7 +104,7 @@ export default function LandingPage() {
           <button
             key={i}
             onClick={() => scrollToPage(i)}
-            className={`h-1.5 w-1.5 md:h-3 md:w-3 rounded-full transition-all duration-300 ${
+            className={`h-3 w-3 rounded-full transition-all duration-300 ${
               currentPage === i
                 ? "scale-125 bg-accent"
                 : isDarkPage
