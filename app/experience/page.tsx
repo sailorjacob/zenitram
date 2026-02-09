@@ -438,6 +438,23 @@ export default function ExperiencePage() {
         </div>
       </nav>
 
+      {/* Bottom navigation dots for horizontal sections */}
+      <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 transition-all duration-700 ${isLoaded ? "opacity-100" : "opacity-0"} ${isOnVideoPage ? "opacity-0 pointer-events-none" : ""}`}>
+        {["Home", "Features", "Solutions", "Technology", "Showcase", "Contact"].map((label, i) => (
+          <button
+            key={label}
+            onClick={() => scrollToSection(i)}
+            className={`rounded-full transition-all duration-300 ${
+              currentSection === i
+                ? "h-2 w-6 bg-accent"
+                : "h-2 w-2 bg-white/30 hover:bg-white/60"
+            }`}
+            aria-label={`Go to ${label}`}
+            title={label}
+          />
+        ))}
+      </div>
+
         <div
           ref={scrollContainerRef}
           data-scroll-container
