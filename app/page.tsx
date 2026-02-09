@@ -7,14 +7,13 @@ import { GradientText } from "@/components/effects/gradient-text"
 import { ParticleSystem } from "@/components/effects/particle-system"
 import { ShaderOrbs } from "@/components/effects/shader-orbs"
 import { BlueprintGrid } from "@/components/landing/blueprint-grid"
-import { ChevronDown, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin, X } from "lucide-react"
+import { ChevronDown, Lightbulb, Thermometer, Lock, Music, Battery, Smartphone, Mail, Phone, MapPin } from "lucide-react"
 
 export default function LandingPage() {
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [selectedService, setSelectedService] = useState<string | null>(null)
 
   const TOTAL_PAGES = 3
 
@@ -105,7 +104,7 @@ export default function LandingPage() {
           <button
             key={i}
             onClick={() => scrollToPage(i)}
-            className={`h-3 w-3 rounded-full transition-all duration-300 ${
+            className={`h-2 w-2 md:h-3 md:w-3 rounded-full transition-all duration-300 ${
               currentPage === i
                 ? "scale-125 bg-accent"
                 : isDarkPage
@@ -215,10 +214,9 @@ export default function LandingPage() {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service, index) => (
-              <button
+              <div
                 key={service.id}
-                onClick={() => setSelectedService(service.id)}
-                className="group relative overflow-hidden rounded-2xl bg-black/40 backdrop-blur-sm p-8 text-left shadow-lg ring-1 ring-white/10 transition-all hover:shadow-xl hover:ring-white/20"
+                className="group relative overflow-hidden rounded-2xl bg-black/40 backdrop-blur-sm p-8 shadow-lg ring-1 ring-white/10 transition-all hover:shadow-xl hover:ring-white/20"
               >
                 {/* Video background in card */}
                 <div className="absolute inset-0 overflow-hidden rounded-2xl opacity-100">
@@ -245,47 +243,10 @@ export default function LandingPage() {
                 </div>
                 <h3 className="relative z-10 mb-2 text-xl font-bold text-white">{service.title}</h3>
                 <p className="relative z-10 text-sm text-white/70">{service.description}</p>
-              </button>
+              </div>
             ))}
           </div>
         </div>
-
-        {/* Service Modal with Video Background */}
-        {selectedService && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={() => setSelectedService(null)}>
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-xl" />
-            <div className="relative z-10 mx-4 w-full max-w-3xl rounded-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              {/* Video Background Grid */}
-              <div className="absolute inset-0 grid grid-cols-3">
-                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
-                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1123.mp4" type="video/mp4" />
-                </video>
-                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
-                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/112.mp4" type="video/mp4" />
-                </video>
-                <video autoPlay loop muted playsInline className="h-full w-full object-cover opacity-30">
-                  <source src="https://twejikjgxkzmphocbvpt.supabase.co/storage/v1/object/public/zenitram/1234.mp4" type="video/mp4" />
-                </video>
-              </div>
-              {/* Vignette overlay */}
-              <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.9) 70%)" }} />
-              <div className="relative p-12">
-                <button
-                  onClick={() => setSelectedService(null)}
-                  className="absolute right-4 top-4 rounded-full bg-white/10 p-2 hover:bg-white/20"
-                >
-                  <X className="h-5 w-5 text-white" />
-                </button>
-                <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
-                  {services.find((s) => s.id === selectedService)?.title}
-                </h2>
-                <p className="text-lg text-white/80 md:text-xl">
-                  Advanced {services.find((s) => s.id === selectedService)?.description.toLowerCase()} solutions designed for modern intelligent homes.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* ==================== PAGE 3: CTA WITH MASKED VIDEOS ==================== */}
